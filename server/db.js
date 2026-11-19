@@ -11,9 +11,12 @@ const path = require('path');
 const fs = require('fs');
 const { DatabaseSync } = require('node:sqlite');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+// Vercel: disco de solo lectura e instancias efímeras → base en memoria sembrada en cada arranque (modo demostración).
+// shortcut: los cambios se pierden al reiniciar la instancia y no se comparten entre instancias; usar un host con disco para producción.
+const EPHEMERAL = !!process.env.VERCEL;
+const DATA_DIR = EPHEMERAL ? path.join(require('os').tmpdir(), 'seniors-data') : path.join(__dirname, '..', 'data');
 fs.mkdirSync(DATA_DIR, { recursive: true });
-const DB_FILE = process.env.DB_FILE || path.join(DATA_DIR, 'seniors.db');
+const DB_FILE = process.env.DB_FILE || (EPHEMERAL ? ':memory:' : path.join(DATA_DIR, 'seniors.db'));
 
 const db = new DatabaseSync(DB_FILE);
 db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
@@ -232,7 +235,7 @@ function setMeta(key, value) {
 }
 
 module.exports = {
-  db, DB_FILE, DATA_DIR, now, tx,
+  db, DB_FILE, DATA_DIR, EPHEMERAL, now, tx,
   getContent, getAllContent, setContent,
   listItems, allItems, getItem, createItem, updateItem, setItemStatus, deleteItem, reorderItems,
   workingSnapshot, latestPublication, publish, restoreSnapshot,

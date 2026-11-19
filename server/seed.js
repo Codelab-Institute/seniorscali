@@ -64,8 +64,10 @@ ${houses}${trees}
 }
 
 function writePlaceholder(slug, svg) {
-  fs.mkdirSync(PH_DIR, { recursive: true });
-  fs.writeFileSync(path.join(PH_DIR, slug + '.svg'), svg);
+  if (!D.EPHEMERAL) { // en Vercel el disco es de solo lectura; los SVG ya están versionados en public/placeholders
+    fs.mkdirSync(PH_DIR, { recursive: true });
+    fs.writeFileSync(path.join(PH_DIR, slug + '.svg'), svg);
+  }
   return '/placeholders/' + slug + '.svg';
 }
 

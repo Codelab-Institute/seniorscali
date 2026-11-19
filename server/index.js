@@ -21,7 +21,7 @@ const S = require('../shared/schema');
 const ROOT = path.join(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const ADMIN_DIR = path.join(ROOT, 'admin');
-const UPLOAD_DIR = path.join(ROOT, 'uploads');
+const UPLOAD_DIR = D.EPHEMERAL ? path.join(D.DATA_DIR, 'uploads') : path.join(ROOT, 'uploads');
 const BACKUP_DIR = path.join(D.DATA_DIR, 'backups');
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 fs.mkdirSync(BACKUP_DIR, { recursive: true });
@@ -71,7 +71,7 @@ function migrateToPages() {
 const app = express();
 const auth = createAuth(D);
 app.disable('x-powered-by');
-app.set('trust proxy', process.env.TRUST_PROXY ? Number(process.env.TRUST_PROXY) : 'loopback');
+app.set('trust proxy', process.env.TRUST_PROXY ? Number(process.env.TRUST_PROXY) : (D.EPHEMERAL ? 1 : 'loopback'));
 
 // ---------------- Cabeceras de seguridad ----------------
 const CSP = [
@@ -852,8 +852,12 @@ app.use((err, req, res, next) => {
   res.status(500).send('Error interno');
 });
 
-app.listen(PORT, () => {
-  console.log(`\n  Seniors en marcha:`);
-  console.log(`   · Sitio público:       http://localhost:${PORT}/`);
-  console.log(`   · Panel administrativo: http://localhost:${PORT}/admin\n`);
-});
+// En Vercel el módulo se importa desde api/index.js como función; localmente se inicia el servidor.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n  Seniors en marcha:`);
+    console.log(`   · Sitio público:       http://localhost:${PORT}/`);
+    console.log(`   · Panel administrativo: http://localhost:${PORT}/admin\n`);
+  });
+}
+module.exports = app;

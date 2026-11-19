@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#91A49A"/><stop offset="1" stop-color="#52665D"/></linearGradient></defs>
+<rect width="1200" height="800" fill="url(#g)"/>
+<circle cx="1040" cy="140" r="260" fill="#E8EEEA" opacity=".12"/><circle cx="160" cy="720" r="320" fill="#E8EEEA" opacity=".10"/>
+<path d="M0 640 C 260 560 420 700 640 630 S 1000 560 1200 620 V800 H0Z" fill="#ffffff" opacity=".12"/>
+<circle cx="600" cy="360" r="120" fill="#ffffff" opacity=".14"/>
+<svg x="540" y="300" color="#ffffff" xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.4 15.4c-.2.4.1.6.4.6h.2a2 2 0 1 1 0 4h-.2c-.3 0-.6.2-.6.5V22h-4.5v-.4c0-.4-.3-.6-.6-.6H14a2 2 0 1 1 0-4h.1c.3 0 .6-.2.6-.6V12H10v-1.5c0-.3.2-.6.6-.6h.2a2 2 0 1 0 0-4h-.2c-.4 0-.6-.2-.6-.6V3h9.5v4.5c0 .4.3.6.6.6h.2a2 2 0 1 1 0 4h-.2c-.3 0-.6.2-.6.6Z"/></svg>
+<text x="600" y="545" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="46" fill="#ffffff">Zonas de entretenimiento 2</text>
+<text x="600" y="595" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" letter-spacing="3" fill="#ffffff" opacity=".8">IMAGEN DE REFERENCIA · REEMPLAZAR</text>
+</svg>

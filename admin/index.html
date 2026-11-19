@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel administrativo · Seniors</title>
+<link rel="icon" type="image/png" sizes="64x64" href="/brand/admin-favicon-64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/admin-favicon-32.png">
+<link rel="apple-touch-icon" href="/brand/admin-favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/assets/admin.css">
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="Menú administrativo">
+    <div class="sb-brand">
+      <img src="/brand/admin-favicon-64.png" alt="">
+      <div><strong>Seniors</strong><small>Panel administrativo</small></div>
+    </div>
+    <nav class="sb-nav" id="sb-nav"></nav>
+    <div class="sb-foot">
+      <button type="button" class="sb-link" id="logout-btn"><span data-icon="logout"></span><span class="sb-label">Cerrar sesión</span></button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="main">
+    <header class="topbar">
+      <button type="button" class="icon-btn" id="sb-toggle" aria-label="Contraer o expandir el menú" aria-controls="sidebar" aria-expanded="true"><span data-icon="panel-left"></span></button>
+      <div class="tb-title"><h1 id="page-title">Inicio</h1><span class="pub-pill" id="pub-pill" hidden></span></div>
+      <div class="tb-actions">
+        <button type="button" class="btn btn-ghost" id="tb-preview" hidden><span data-icon="eye"></span><span class="lbl">Vista previa</span></button>
+        <button type="button" class="btn" id="tb-publish" hidden><span data-icon="rocket"></span><span class="lbl">Publicar cambios</span></button>
+        <a class="icon-btn desktop-only" href="/" target="_blank" rel="noopener" aria-label="Ver sitio público" title="Ver sitio público"><span data-icon="globe"></span></a>
+        <a class="icon-btn" href="#/solicitudes" id="tb-bell" aria-label="Solicitudes pendientes" title="Solicitudes pendientes" hidden><span data-icon="bell"></span></a>
+        <div class="menu-wrap">
+          <button type="button" class="user-btn" id="user-btn" aria-haspopup="menu" aria-expanded="false">
+            <span class="avatar" id="u-avatar">?</span>
+            <span class="u-txt"><strong id="u-name"></strong><small id="u-role"></small></span>
+          </button>
+          <div class="dropdown" id="user-menu" role="menu" hidden>
+            <div style="padding:8px 10px 4px"><strong id="u-name2" style="display:block"></strong><small class="muted" id="u-email"></small></div>
+            <hr>
+            <button type="button" role="menuitem" id="pw-btn"><span data-icon="lock"></span>Cambiar contraseña</button>
+            <a role="menuitem" href="/" target="_blank" rel="noopener"><span data-icon="globe"></span>Ver sitio público</a>
+            <hr>
+            <button type="button" role="menuitem" id="logout-btn2"><span data-icon="logout"></span>Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="content" id="view" tabindex="-1"></main>
+  </div>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="/shared/icons.js"></script>
+<script src="/shared/schema.js"></script>
+<script src="/admin/assets/admin-core.js"></script>
+<script src="/admin/assets/admin-modules.js"></script>
+</body>
+</html>

@@ -12,6 +12,12 @@ const SESSION_COOKIE = 'seniors_sid';
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 horas
 const IS_PROD = process.env.NODE_ENV === 'production';
 
+// PROTOTIPO: tres cuentas fijas con la misma contraseña; no se consulta la contraseña guardada en la base.
+// shortcut: credenciales y firma de sesión en el código; reemplazar por contraseñas reales y SESSION_SECRET antes de producción.
+const PROTOTYPE_PASSWORD = '1234567890';
+const PROTOTYPE_USERS = ['admin@seniorscali.co', 'editor@seniorscali.co', 'solicitudes@seniorscali.co'];
+const SESSION_SECRET = process.env.SESSION_SECRET || 'seniors-prototipo-sesion';
+
 function hashPassword(pw) {
   const salt = crypto.randomBytes(16);
   const hash = crypto.scryptSync(pw, salt, 64, { N: 16384, r: 8, p: 1 });
@@ -26,8 +32,6 @@ function verifyPassword(pw, stored) {
     return crypto.timingSafeEqual(expected, got);
   } catch (e) { return false; }
 }
-// Hash ficticio para igualar el tiempo de respuesta cuando el usuario no existe.
-const DUMMY_HASH = hashPassword(crypto.randomBytes(12).toString('hex'));
 
 function passwordProblem(pw) {
   if (typeof pw !== 'string' || pw.length < 10) return 'La contraseña debe tener al menos 10 caracteres.';
@@ -55,33 +59,33 @@ function cookieAttrs(maxAgeSec) {
 function createAuth(D) {
   const { db, now } = D;
 
+  // Sesión firmada en la cookie (sin tabla): en Vercel cada instancia tiene su propia base en memoria,
+  // así que una sesión guardada en la base se perdía al caer en otra instancia o tras un reinicio.
+  // shortcut: cerrar sesión solo borra la cookie (no revoca el token); está bien para el prototipo.
+  const sign = (data) => crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+
   function createSession(res, userId) {
-    const token = crypto.randomBytes(32).toString('base64url');
     const csrf = crypto.randomBytes(24).toString('base64url');
-    db.prepare('INSERT INTO sessions (token_hash, user_id, csrf, created_at, expires_at) VALUES (?, ?, ?, ?, ?)')
-      .run(sha256(token), userId, csrf, now(), Date.now() + SESSION_TTL_MS);
-    db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
-    res.setHeader('Set-Cookie', `${SESSION_COOKIE}=${token}; ${cookieAttrs(SESSION_TTL_MS / 1000)}`);
+    const data = Buffer.from(JSON.stringify({ uid: userId, csrf, exp: Date.now() + SESSION_TTL_MS })).toString('base64url');
+    res.setHeader('Set-Cookie', `${SESSION_COOKIE}=${data}.${sign(data)}; ${cookieAttrs(SESSION_TTL_MS / 1000)}`);
     return csrf;
   }
 
   function destroySession(req, res) {
-    const token = parseCookies(req)[SESSION_COOKIE];
-    if (token) db.prepare('DELETE FROM sessions WHERE token_hash = ?').run(sha256(token));
     res.setHeader('Set-Cookie', `${SESSION_COOKIE}=; ${cookieAttrs(0)}`);
   }
 
   function loadSession(req) {
-    const token = parseCookies(req)[SESSION_COOKIE];
-    if (!token) return null;
-    const row = db.prepare(`SELECT s.csrf, s.expires_at, s.token_hash, u.id, u.name, u.email, u.role, u.active, u.must_change
-      FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ?`).get(sha256(token));
-    if (!row || row.expires_at < Date.now() || !row.active) return null;
-    // Renovación deslizante de la sesión
-    if (row.expires_at - Date.now() < SESSION_TTL_MS / 2) {
-      db.prepare('UPDATE sessions SET expires_at = ? WHERE token_hash = ?').run(Date.now() + SESSION_TTL_MS, row.token_hash);
-    }
-    return { user: { id: row.id, name: row.name, email: row.email, role: row.role, must_change: !!row.must_change, perms: (ROLES[row.role] || { perms: [] }).perms }, csrf: row.csrf };
+    const [data, sig] = String(parseCookies(req)[SESSION_COOKIE] || '').split('.');
+    if (!data || !sig) return null;
+    const a = Buffer.from(sig), b = Buffer.from(sign(data));
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
+    let s;
+    try { s = JSON.parse(Buffer.from(data, 'base64url').toString()); } catch (e) { return null; }
+    if (!s || s.exp < Date.now()) return null;
+    const row = db.prepare('SELECT id, name, email, role, active, must_change FROM users WHERE id = ?').get(s.uid);
+    if (!row || !row.active) return null;
+    return { user: { id: row.id, name: row.name, email: row.email, role: row.role, must_change: !!row.must_change, perms: (ROLES[row.role] || { perms: [] }).perms }, csrf: s.csrf };
   }
 
   // Middleware: exige sesión válida. Para APIs responde 401; para páginas redirige al inicio de sesión.
@@ -130,7 +134,7 @@ function createAuth(D) {
     if (tooMany(ipKey) || tooMany(userKey)) return res.status(429).json({ error: 'Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.' });
     if (!email || !password) return res.status(400).json({ error: 'Ingresa tu correo y contraseña.' });
     const u = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
-    const ok = verifyPassword(password, u ? u.password_hash : DUMMY_HASH);
+    const ok = PROTOTYPE_USERS.includes(email) && password === PROTOTYPE_PASSWORD;
     if (!u || !ok || !u.active) {
       fail(ipKey); fail(userKey);
       return res.status(401).json({ error: u && ok && !u.active ? 'Tu usuario está desactivado. Contacta al administrador.' : 'Correo o contraseña incorrectos.' });
@@ -176,4 +180,4 @@ function createAuth(D) {
   return { createSession, destroySession, loadSession, requireAuth, requirePerm, login, requestReset, doReset };
 }
 
-module.exports = { hashPassword, verifyPassword, passwordProblem, createAuth, parseCookies, SESSION_COOKIE };
+module.exports = { hashPassword, verifyPassword, passwordProblem, createAuth, parseCookies, SESSION_COOKIE, PROTOTYPE_PASSWORD };

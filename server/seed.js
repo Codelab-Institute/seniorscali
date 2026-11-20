@@ -5,9 +5,8 @@
  */
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const D = require('./db');
-const { hashPassword } = require('./auth');
+const { hashPassword, PROTOTYPE_PASSWORD } = require('./auth');
 const { icon } = require('../shared/icons');
 
 const PUBLIC = path.join(__dirname, '..', 'public');
@@ -71,10 +70,6 @@ function writePlaceholder(slug, svg) {
   return '/placeholders/' + slug + '.svg';
 }
 
-function randomPassword() {
-  return crypto.randomBytes(9).toString('base64url') + 'a7!';
-}
-
 function seed() {
   const already = D.db.prepare('SELECT COUNT(*) AS n FROM users').get().n;
   if (already > 0) return false;
@@ -94,10 +89,10 @@ function seed() {
 
   // ---- Usuarios iniciales ----
   const creds = [
-    { name: 'Administración Seniors', email: 'admin@seniors.local', role: 'admin' },
-    { name: 'Editor de contenidos', email: 'editor@seniors.local', role: 'editor' },
-    { name: 'Gestor de solicitudes', email: 'solicitudes@seniors.local', role: 'gestor' }
-  ].map((u) => ({ ...u, password: process.env.SEED_ADMIN_PASSWORD && u.role === 'admin' ? process.env.SEED_ADMIN_PASSWORD : randomPassword() }));
+    { name: 'Administración Seniors', email: 'admin@seniorscali.co', role: 'admin' },
+    { name: 'Editor de contenidos', email: 'editor@seniorscali.co', role: 'editor' },
+    { name: 'Gestor de solicitudes', email: 'solicitudes@seniorscali.co', role: 'gestor' }
+  ].map((u) => ({ ...u, password: PROTOTYPE_PASSWORD })); // prototipo: contraseña fija (ver server/auth.js)
   const insUser = D.db.prepare('INSERT INTO users (name, email, password_hash, role, active, must_change, created_at) VALUES (?, ?, ?, ?, 1, 0, ?)');
   for (const u of creds) insUser.run(u.name, u.email, hashPassword(u.password), u.role, t);
   const credFile = path.join(D.DATA_DIR, 'credenciales-iniciales.txt');

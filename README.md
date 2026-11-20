@@ -31,7 +31,15 @@ Cada opción del menú es una página independiente que muestra solo su propio c
 
 Desactivar una página en el panel («Página principal») la oculta del menú y del resumen de Inicio, y su dirección responde «no encontrada».
 
-La primera vez se crea la base de datos con el contenido inicial y tres usuarios de prueba (administrador, editor y gestor de solicitudes). Sus contraseñas se generan al azar y se guardan en `data/credenciales-iniciales.txt`. Cámbialas y elimina ese archivo antes de entregar el sistema.
+La primera vez se crea la base de datos con el contenido inicial y tres usuarios de prueba. **Prototipo:** los tres entran con la contraseña fija `1234567890`, definida en `server/auth.js` (la contraseña guardada en la base no se consulta al iniciar sesión):
+
+| Rol | Correo |
+|---|---|
+| Administrador | `admin@seniorscali.co` |
+| Editor de contenidos | `editor@seniorscali.co` |
+| Gestor de solicitudes | `solicitudes@seniorscali.co` |
+
+Antes de producción hay que volver a verificar contraseñas reales y definir `SESSION_SECRET`. Si ya tenías una base local de antes de este cambio, ejecuta `npm run reset` para crear los usuarios con estos correos.
 
 Otros comandos:
 
@@ -90,7 +98,7 @@ Los permisos se verifican en la interfaz y también en el servidor.
 ## Despliegue en producción
 
 - Ejecutar con `NODE_ENV=production` detrás de un proxy con HTTPS (Nginx, Caddy o el del proveedor). Si el proxy no corre en la misma máquina, definir `TRUST_PROXY=1`.
-- Variables opcionales: `PORT`, `DB_FILE`, `SEED_ADMIN_PASSWORD` (contraseña del administrador inicial).
+- Variables opcionales: `PORT`, `DB_FILE`, `SESSION_SECRET` (clave para firmar la cookie de sesión).
 - Respaldar las carpetas `data/` y `uploads/`.
 - En el panel, en **Configuración → SEO**, indicar la dirección pública del sitio para el sitemap y los metadatos.
 

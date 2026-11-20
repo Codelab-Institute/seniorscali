@@ -9,7 +9,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 
 const ROOT = path.join(__dirname, '..');
-const OUT = path.join(ROOT, 'public', 'brand');
+const OUT = path.join(ROOT, 'src', 'assets', 'brand');
 fs.mkdirSync(OUT, { recursive: true });
 
 const GREEN = [0x52, 0x66, 0x5d];
@@ -50,23 +50,8 @@ async function favicons() {
   await sharp(round).resize(512, 512).png().toFile(path.join(OUT, 'isotipo.png'));
 }
 
-// Favicon exclusivo del panel administrativo (fondo blanco), para diferenciarlo del sitio público.
-async function adminFavicons() {
-  const src = path.join(ROOT, 'Favicon Admin.webp');
-  if (!fs.existsSync(src)) return;
-  const meta = await sharp(src).metadata();
-  const size = Math.min(meta.width, meta.height);
-  const mask = Buffer.from(`<svg width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 4}" fill="#fff"/></svg>`);
-  const flat = await sharp(src).resize(size, size).flatten({ background: '#ffffff' }).png().toBuffer();
-  const round = await sharp(flat).ensureAlpha().composite([{ input: mask, blend: 'dest-in' }]).png().toBuffer();
-  for (const s of [512, 192, 180, 64, 32]) {
-    await sharp(round).resize(s, s).png({ compressionLevel: 9 }).toFile(path.join(OUT, `admin-favicon-${s}.png`));
-  }
-}
-
 (async () => {
   await logos();
   await favicons();
-  await adminFavicons();
-  console.log('Recursos de marca generados en public/brand');
+  console.log('Recursos de marca generados en src/assets/brand');
 })().catch((e) => { console.error(e); process.exit(1); });

@@ -1,104 +1,122 @@
-# Seniors · Plataforma institucional
+# Seniors · Sitio web
 
-Sitio público nuevo de **Seniors Hogar y Entretenimiento Gold** con un **panel administrativo** para gestionar sus contenidos sin tocar el código. Se construyó desde cero; el sitio actual (seniorscali.co) no se modificó.
+Sitio web **estático y bilingüe (español / inglés)** de **Seniors Hogar y Entretenimiento Gold**.
+No usa servidor, base de datos ni panel administrativo: los contenidos se editan en archivos de código y el sitio se genera como HTML puro, listo para cualquier hosting estático (GitHub Pages, Netlify, Cloudflare Pages, Vercel o un hosting tradicional).
 
-## Puesta en marcha
+## Uso
 
-Requisitos: Node.js 22.13 o superior.
+Requisitos: Node.js 18 o superior.
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
-- Sitio público: http://localhost:3000/
-- Panel administrativo: http://localhost:3000/admin (no aparece en el menú público)
-
-### Páginas del sitio público
-
-Cada opción del menú es una página independiente que muestra solo su propio contenido:
-
-| Página | Dirección | Contenido |
-|---|---|---|
-| Inicio | `/` | Presentación principal y un resumen de cada sección con enlaces a su página |
-| Nosotros | `/nosotros` | ¿Por qué elegir Seniors? |
-| Servicios | `/servicios` | Servicios principales y complementarios |
-| Instalaciones | `/instalaciones` | Galería por categorías y recorrido virtual |
-| Experiencias | `/experiencias` | Publicaciones con filtros por categoría |
-| Testimonios | `/testimonios` | Carrusel de testimonios |
-| Preguntas frecuentes | `/preguntas-frecuentes` | Acordeón (enlazado desde Inicio, Contacto y el pie de página) |
-| Contacto | `/contacto` | Datos de contacto y formulario de agendamiento (`/contacto#agendar` lleva directo al formulario) |
-
-Desactivar una página en el panel («Página principal») la oculta del menú y del resumen de Inicio, y su dirección responde «no encontrada».
-
-La primera vez se crea la base de datos con el contenido inicial y tres usuarios de prueba (administrador, editor y gestor de solicitudes). Sus contraseñas se generan al azar y se guardan en `data/credenciales-iniciales.txt`. Cámbialas y elimina ese archivo antes de entregar el sistema.
-
-Otros comandos:
+Abre http://localhost:3000/ (inglés en http://localhost:3000/en/). Al guardar cambios en `src/`, el sitio se reconstruye y el navegador se recarga solo.
 
 | Comando | Qué hace |
 |---|---|
-| `npm run dev` | Inicia el servidor y lo reinicia al modificar el código |
-| `npm run reset` | Vuelve al contenido inicial (borra solicitudes, historial y archivos subidos). Detén el servidor antes |
-| `npm run brand` | Regenera logotipos y favicons a partir de `Logo.png`, `Favicon 2.png` (sitio público) y `Favicon Admin.webp` (panel administrativo) |
-| `node scripts/smoke-test.js` | Prueba de extremo a extremo (40 verificaciones) con el servidor en marcha |
+| `npm run dev` | Servidor local con reconstrucción y recarga automáticas |
+| `npm run build` | Genera el sitio final en `dist/` |
+| `npm run check` | Revisa `dist/`: enlaces, imágenes, anclas, idioma y metadatos |
+| `npm start` | Sirve `dist/` tal como quedará publicado |
+| `npm run brand` | Regenera logotipos y favicons desde `Logo.png` y `Favicon 2.png` |
+| `npm run placeholders` | Regenera las imágenes de referencia |
 
-## Arquitectura
+## Páginas
 
+| Español | Inglés | Contenido |
+|---|---|---|
+| `/` | `/en/` | Inicio: presentación y resumen de cada sección |
+| `/nosotros/` | `/en/about/` | Historia y beneficios |
+| `/servicios/` | `/en/services/` | Estadía, pasadía, talleres y servicios complementarios |
+| `/instalaciones/` | `/en/facilities/` | Galería con filtros y recorrido virtual |
+| `/experiencias/` | `/en/experiences/` | Publicaciones con filtros |
+| `/testimonios/` | `/en/testimonials/` | Testimonios |
+| `/preguntas-frecuentes/` | `/en/faq/` | Preguntas frecuentes |
+| `/contacto/` | `/en/contact/` | Datos de contacto y formulario de visita |
+| `/politica-de-privacidad/`, `/tratamiento-de-datos/` | `/en/privacy-policy/`, `/en/data-policy/` | Políticas |
+
+El selector **ES / EN** del encabezado lleva a la misma página en el otro idioma.
+
+## Cómo editar contenidos
+
+Todo el contenido está en `src/content/`. Cada texto tiene sus dos idiomas juntos:
+
+```js
+title: { es: 'Un lugar para *disfrutar* cada etapa de la vida', en: 'A place to *enjoy* every stage of life' }
 ```
-server/        Backend Express: API, autenticación, subida de archivos, renderizado del sitio
-  index.js     Rutas públicas, API administrativa, publicación, multimedia, solicitudes, usuarios
-  db.js        Base de datos SQLite (data/seniors.db) y modelo de publicación
-  auth.js      Contraseñas scrypt, sesiones HttpOnly, CSRF y límite de intentos
-  render.js    HTML de la página pública generado en el servidor (SEO)
-  validate.js  Validación y saneamiento de todo lo que llega del panel
-  seed.js      Contenido inicial (datos tomados del sitio actual)
-shared/        Esquema de contenidos e iconos (los usan el servidor y el panel)
-public/        Estilos, JavaScript, logotipos e imágenes de referencia del sitio público
-admin/         Panel administrativo (aplicación independiente, misma fuente de datos)
-uploads/       Imágenes y videos subidos (optimizados a WebP)
-data/          Base de datos, copias de seguridad automáticas y credenciales iniciales
-```
 
-### Cómo funciona la publicación
+En los títulos, las palabras entre `*asteriscos*` se destacan en cursiva turquesa.
 
-1. Lo que se edita en el panel se guarda en la **copia de trabajo** (borrador del sitio).
-2. **Vista previa** muestra la copia de trabajo, o incluso cambios aún no guardados, en 7 tamaños de pantalla (320 a 1920 px).
-3. **Publicar cambios** (solo el administrador) valida el contenido, guarda una versión y actualiza el sitio al instante, sin volver a desplegar.
-4. Cada elemento tiene estado **Borrador**, **Publicado** o **Despublicado**. Solo los publicados aparecen en el sitio.
-5. El **Historial** registra quién cambió qué y cuándo, y permite restaurar versiones publicadas anteriores.
-
-### Roles
-
-| Rol | Puede |
+| Archivo | Contenido |
 |---|---|
-| Administrador | Todo: contenidos, enlaces, identidad visual, configuración, solicitudes, publicar, usuarios |
-| Editor de contenidos | Textos, fotografías, servicios, experiencias, testimonios y preguntas (guarda borradores, no publica) |
-| Gestor de solicitudes | Consultar solicitudes, cambiar estados y registrar observaciones |
+| `settings.js` | Nombre, dirección, teléfonos, WhatsApp, correo, horarios, redes sociales, dirección pública del sitio |
+| `ui.js` | Menú, direcciones de las páginas y textos de botones, formularios y mensajes |
+| `home.js` | Inicio (presentación, datos destacados, invitación final) y página Nosotros |
+| `services.js` | Servicios principales y complementarios |
+| `facilities.js` | Categorías, fotografías y espacios del recorrido virtual |
+| `experiences.js` | Experiencias y sus categorías |
+| `testimonials.js` | Testimonios |
+| `faq.js` | Preguntas frecuentes (también alimentan el chat) |
+| `contact.js` | Formulario: horarios disponibles, texto de autorización y mensaje de confirmación |
+| `legal.js` | Políticas de privacidad y de tratamiento de datos |
 
-Los permisos se verifican en la interfaz y también en el servidor.
+### Cambiar o agregar fotografías
 
-## Seguridad
+1. Copia la foto (JPG, PNG o WebP) en `src/assets/images/`, por ejemplo `habitacion-1.jpg`.
+2. En el archivo de contenido, cambia la ruta: `image: 'images/habitacion-1.jpg'`.
+3. Al construir, la foto se convierte automáticamente a WebP en varios tamaños (480 a 1800 px) y cada dispositivo descarga solo el tamaño que necesita.
 
-- Contraseñas con scrypt; sesiones en cookie HttpOnly y SameSite=Strict (Secure en producción); token CSRF en cada cambio.
-- Bloqueo de 15 minutos tras 5 intentos fallidos. Recuperación de contraseña con enlace de un solo uso (en el prototipo el enlace se muestra en la consola del servidor; en producción hay que conectar un servicio de correo).
-- Cabeceras CSP, HSTS (en producción), nosniff y protección contra iframes de otros sitios.
-- Archivos: se verifica el tipo real (no solo la extensión). Imágenes de hasta 10 MB y videos de hasta 60 MB. Los SVG con scripts se rechazan. Las imágenes se re-codifican a WebP.
-- El texto enriquecido se sanea en el servidor (solo negrita, cursiva, listas y enlaces).
-- Formulario público: validación en el servidor, campo trampa contra bots y límite de envíos por IP. Las solicitudes solo las ve el personal autorizado.
-- Copia diaria automática de la base de datos (se conservan 14) y descarga manual desde Configuración.
+Para el recorrido virtual usa fotos panorámicas horizontales (proporción 3:1 o más amplia).
+Las experiencias aceptan videos `.mp4` o `.webm` en el campo `media` (con `poster` como imagen de portada).
 
-## Despliegue en producción
+## Formulario de visitas
 
-- Ejecutar con `NODE_ENV=production` detrás de un proxy con HTTPS (Nginx, Caddy o el del proveedor). Si el proxy no corre en la misma máquina, definir `TRUST_PROXY=1`.
-- Variables opcionales: `PORT`, `DB_FILE`, `SEED_ADMIN_PASSWORD` (contraseña del administrador inicial).
-- Respaldar las carpetas `data/` y `uploads/`.
-- En el panel, en **Configuración → SEO**, indicar la dirección pública del sitio para el sitemap y los metadatos.
+Al no haber servidor, el formulario funciona de dos maneras (se configura en `src/content/settings.js` → `form.endpoint`):
+
+- **Sin configurar (actual):** valida los datos y abre WhatsApp con la solicitud ya redactada para enviarla al número institucional.
+- **Con un servicio de formularios** (por ejemplo, [Formspree](https://formspree.io)): pega la dirección del formulario en `form.endpoint` y las solicitudes llegarán por correo.
+
+En ambos casos la visita no se confirma automáticamente: el equipo verifica la disponibilidad y contacta a la familia.
+
+## Rendimiento
+
+- HTML generado de antemano, sin consultas a servidor ni base de datos.
+- Imágenes en WebP con varios tamaños, carga diferida y dimensiones fijas (sin saltos de diseño).
+- Un solo CSS minificado y un solo JavaScript diferido, sin librerías. Los nombres llevan una huella para caché de larga duración.
+- La imagen principal de Inicio se precarga. Las fuentes cargan con `display=swap`.
+
+## Publicación
+
+```bash
+npm run build
+```
+
+Sube el contenido de `dist/` al hosting. Antes, revisa `siteUrl` en `src/content/settings.js` (se usa en el sitemap, las etiquetas canónicas y las vistas previas en redes sociales).
+
+- **Subcarpeta** (por ejemplo, GitHub Pages de proyecto `usuario.github.io/seniors/`): construye con `BASE_PATH=/seniors npm run build`.
+- **Netlify / Cloudflare Pages:** comando `npm run build`, carpeta `dist`. El archivo `_headers` ya configura la caché.
+- `dist/404.html` es la página de error, y `sitemap.xml` y `robots.txt` se generan automáticamente.
+
+## Estructura
+
+```
+src/
+  content/     Textos e información (español e inglés)
+  assets/      Logotipos, favicons e imágenes originales
+  styles/      site.css (diseño)
+  scripts/     site.js (menú, galerías, carrusel, formulario, chat, recorrido)
+  lib/icons.js Iconos lineales
+  templates.js Plantillas HTML de todas las páginas
+scripts/       build, servidor local, revisión, marca e imágenes de referencia
+dist/          Sitio generado (no se versiona)
+```
 
 ## Pendiente por parte de Seniors
 
-- **Fotografías reales**: el sitio usa imágenes de referencia marcadas como «Reemplazar». Súbelas en *Imágenes y multimedia* y usa «Reemplazar»: se actualizan en todas las secciones.
-- **Panorámicas** del recorrido virtual (fotografías horizontales amplias).
-- **Validar** los textos de los beneficios y las respuestas marcadas como «Sin validar» (por ejemplo, costos y atención médica).
-- **Testimonios reales** con autorización. Los actuales son ejemplos y el sitio los muestra como «Ejemplo ilustrativo».
-- Revisar las **políticas de privacidad y de tratamiento de datos**, que son textos de referencia.
-- El chat es una **demostración** con respuestas basadas en las preguntas frecuentes. Está preparado para integrar inteligencia artificial con información institucional verificada.
+- **Fotografías reales:** el sitio usa imágenes de referencia.
+- **Testimonios y experiencias reales:** los actuales son ejemplos y se muestran como «Ejemplo ilustrativo» (`example: true`).
+- **Validar** las respuestas marcadas `pending: true` en `faq.js` (atención médica y costos).
+- **Revisar las políticas legales** (textos de referencia).
+- El chat es una **demostración** basada en las preguntas frecuentes.

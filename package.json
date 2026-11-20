@@ -12,12 +12,16 @@
     "start": "node --disable-warning=ExperimentalWarning server/index.js",
     "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
     "brand": "node scripts/prepare-brand.js",
-    "reset": "node --disable-warning=ExperimentalWarning scripts/reset-db.js"
+    "reset": "node --disable-warning=ExperimentalWarning scripts/reset-db.js",
+    "vercel-build": "esbuild server/index.js --bundle --platform=node --target=node22 --format=cjs --external:sharp --log-level=warning --outfile=api/_server.js"
   },
   "dependencies": {
     "express": "^4.21.2",
     "multer": "^2.0.2",
     "sanitize-html": "^2.14.0",
     "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

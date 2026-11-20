@@ -4,3 +4,4 @@ uploads/
 .env
 .claude/
 *.log
+api/_server.js

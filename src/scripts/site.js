@@ -26,7 +26,7 @@
   }
   function trapFocus(el, e) {
     if (e.key !== 'Tab') return;
-    var f = $$('button:not([disabled]), a[href], input, video[controls]', el).filter(function (x) { return x.offsetParent !== null; });
+    var f = $$('button:not([disabled]), a[href], input:not([tabindex="-1"]), select, textarea, video[controls]', el).filter(function (x) { return x.offsetParent !== null; });
     if (!f.length) return;
     if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
     else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
@@ -55,13 +55,13 @@
     nav.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? toggle.dataset.close : toggle.dataset.open);
-    document.body.style.overflow = open && window.innerWidth <= 1080 ? 'hidden' : '';
+    document.body.style.overflow = open && window.innerWidth <= 1180 ? 'hidden' : '';
   }
   if (toggle) toggle.addEventListener('click', function () { setMenu(!nav.classList.contains('is-open')); });
   if (nav) nav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && nav && nav.classList.contains('is-open')) { setMenu(false); toggle.focus(); } });
   document.addEventListener('click', function (e) { if (nav && nav.classList.contains('is-open') && !e.target.closest('.site-header')) setMenu(false); });
-  window.addEventListener('resize', function () { if (window.innerWidth > 1080 && nav && nav.classList.contains('is-open')) setMenu(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1180 && nav && nav.classList.contains('is-open')) setMenu(false); });
 
   // ---------- Animaciones de entrada ----------
   var reveals = $$('.reveal');
@@ -197,35 +197,77 @@
     });
   });
 
-  // ---------- Formulario de agendamiento ----------
+  // ---------- Ventanas (agendar visita y pagos) ----------
+  var openModal = null;
+  function showModal(id) {
+    var m = document.getElementById(id);
+    if (!m) return;
+    if (openModal) hideModal(true);
+    lastFocus = document.activeElement;
+    m.hidden = false;
+    openModal = m;
+    document.documentElement.style.overflow = 'hidden';
+    var f = $('input:not([type=hidden]):not([tabindex="-1"]), select, textarea', m);
+    setTimeout(function () { (f || $('.modal-close', m)).focus(); }, 40);
+  }
+  function hideModal(silent) {
+    if (!openModal) return;
+    openModal.hidden = true;
+    openModal = null;
+    document.documentElement.style.overflow = '';
+    if (!silent && lastFocus && lastFocus.focus) lastFocus.focus();
+    if (/^#(agendar|pago)$/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+  }
+  $$('[data-modal-open]').forEach(function (b) { b.addEventListener('click', function () { showModal(b.dataset.modalOpen); }); });
+  $$('.modal').forEach(function (m) {
+    m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('[data-modal-close]')) hideModal(); });
+    m.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideModal(); trapFocus(m, e); });
+  });
+  // /contacto/#agendar y /contacto/#pago abren directamente el formulario
+  function fromHash() {
+    if (location.hash === '#agendar') showModal('booking-modal');
+    if (location.hash === '#pago') showModal('payment-modal');
+  }
+  fromHash();
+  window.addEventListener('hashchange', fromHash);
+
+  // Utilidades de formularios
+  function fieldErrors(form, prefix) {
+    return function (name, msg) {
+      var input = form.elements[name], p = $('#' + prefix + '-' + name + '-err', form);
+      if (p) p.textContent = msg || '';
+      var box = input && (input.length && !input.tagName ? input[0] : input);
+      if (box) {
+        var field = box.closest('.field');
+        if (field) field.classList.toggle('has-error', !!msg);
+        if (input.tagName) { input.setAttribute('aria-invalid', msg ? 'true' : 'false'); if (p) input.setAttribute('aria-describedby', p.id); }
+      }
+    };
+  }
+  var isEmail = function (v) { return /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v); };
+  var waLink = function (text) { return 'https://wa.me/' + D.whatsapp + '?text=' + encodeURIComponent(text); };
+
+  // ---------- Formulario de agendamiento (se envía al correo administrativo) ----------
   var form = $('#booking-form');
   if (form) {
     var status = $('.form-status', form);
     var F = form.elements;
-    var showErr = function (name, msg) {
-      var input = F[name], p = $('#bf-' + name + '-err', form);
-      if (p) p.textContent = msg || '';
-      if (input) {
-        input.closest('.field').classList.toggle('has-error', !!msg);
-        input.setAttribute('aria-invalid', msg ? 'true' : 'false');
-        if (p) input.setAttribute('aria-describedby', p.id);
-      }
-    };
+    var showErr = fieldErrors(form, 'bf');
     var today = function () { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
     if (F.date) F.date.min = today();
-    function validate() {
+    var validate = function () {
       var e = {};
       if (F.name.value.trim().length < 3) e.name = T.eName;
       var ph = F.phone.value.trim();
       if (!/^\+?[\d\s()-]{7,20}$/.test(ph) || ph.replace(/\D/g, '').length < 7) e.phone = T.ePhone;
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(F.email.value.trim())) e.email = T.eEmail;
+      if (!isEmail(F.email.value.trim())) e.email = T.eEmail;
       if (!F.service.value) e.service = T.eService;
       if (!F.date.value) e.date = T.eDate; else if (F.date.value < today()) e.date = T.eDatePast;
       if (!F.time.value) e.time = T.eTime;
       if (!F.consent.checked) e.consent = T.eConsent;
       ['name', 'phone', 'email', 'service', 'date', 'time', 'consent'].forEach(function (n) { showErr(n, e[n]); });
       return e;
-    }
+    };
     $$('input, select, textarea', form).forEach(function (el) {
       el.addEventListener(el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'blur', function () { if (form.dataset.tried) validate(); });
     });
@@ -236,34 +278,117 @@
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
       form.dataset.tried = '1';
-      status.className = 'form-status'; status.textContent = '';
+      status.className = 'form-status'; status.innerHTML = '';
       var errs = validate();
       var first = Object.keys(errs)[0];
       if (first) { F[first].focus(); return; }
       if (F.website.value) return; // trampa para bots
       var data = { name: F.name.value.trim(), phone: F.phone.value.trim(), email: F.email.value.trim(), service: F.service.value, date: F.date.value, time: F.time.value, message: F.message.value.trim() };
-      var done = function (msg) {
-        form.reset(); delete form.dataset.tried;
-        status.className = 'form-status ok'; status.textContent = msg;
-        status.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      var text = [T.waGreeting, '', T.fName + ': ' + data.name, T.fPhone + ': ' + data.phone, T.fEmail + ': ' + data.email,
+        T.fService + ': ' + data.service, T.fDate + ': ' + fmtDate(data.date), T.fTime + ': ' + data.time]
+        .concat(data.message ? [T.fMessage + ': ' + data.message] : []).join('\n');
+      var showStatus = function (kind, msg, withWhatsapp) {
+        status.className = 'form-status ' + kind;
+        status.innerHTML = '';
+        status.appendChild(document.createTextNode(msg));
+        if (withWhatsapp) {
+          var a = document.createElement('a');
+          a.className = 'btn btn-whatsapp'; a.href = waLink(text); a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.textContent = T.sendWhatsapp;
+          status.appendChild(a);
+        }
+        status.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
       };
-      if (!D.formEndpoint) {
-        // Sin servicio de formularios: se abre WhatsApp con la solicitud redactada
-        var text = [T.waGreeting, '',
-          T.fName + ': ' + data.name, T.fPhone + ': ' + data.phone, T.fEmail + ': ' + data.email,
-          T.fService + ': ' + data.service, T.fDate + ': ' + fmtDate(data.date), T.fTime + ': ' + data.time]
-          .concat(data.message ? [T.fMessage + ': ' + data.message] : []).join('\n');
-        window.open('https://wa.me/' + D.whatsapp + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
-        done(T.okWhatsapp);
-        return;
-      }
+      if (!D.formEndpoint) { showStatus('err', T.eNotConfigured, true); return; }
       var btn = $('button[type="submit"]', form);
       btn.disabled = true; $('span', btn).textContent = T.fSending;
-      fetch(D.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.assign({ _subject: 'Solicitud de visita · Seniors', idioma: D.lang }, data)) })
-        .then(function (r) { if (!r.ok) throw new Error(); done(T.success); })
-        .catch(function () { status.className = 'form-status err'; status.textContent = T.eSend; })
+      var payload = {
+        _subject: (D.lang === 'en' ? 'Visit request · Seniors · ' : 'Solicitud de visita · Seniors · ') + data.name,
+        _template: 'table', _captcha: 'false', _replyto: data.email
+      };
+      payload[T.fName] = data.name; payload[T.fPhone] = data.phone; payload[T.fEmail] = data.email; payload[T.fService] = data.service;
+      payload[T.fDate] = fmtDate(data.date); payload[T.fTime] = data.time; payload[T.fMessage] = data.message || '—';
+      payload[D.lang === 'en' ? 'Language' : 'Idioma'] = D.lang === 'en' ? 'English' : 'Español';
+      fetch(D.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || j.success === false || j.success === 'false') throw new Error(); }); })
+        .then(function () { form.reset(); delete form.dataset.tried; showStatus('ok', T.success); })
+        .catch(function () { showStatus('err', T.eSend, true); })
         .then(function () { btn.disabled = false; $('span', btn).textContent = T.fSubmit; });
     });
+  }
+
+  // ---------- Formulario de pago (interfaz; la pasarela Wompi se conectará después) ----------
+  var pay = $('#payment-form');
+  if (pay && D.payment) {
+    var P = pay.elements, PC = D.payment;
+    var pErr = fieldErrors(pay, 'pf');
+    var summary = $('#pay-summary');
+    var locale = D.lang === 'en' ? 'en-US' : 'es-CO';
+    var money = function (n) { return '$ ' + Number(n).toLocaleString(locale, { maximumFractionDigits: 0 }) + ' ' + PC.currency; };
+    var digits = function (v) { return Number(String(v).replace(/\D/g, '')) || 0; };
+    // Formato de miles mientras se escribe
+    P.amount.addEventListener('input', function () {
+      var n = digits(P.amount.value);
+      P.amount.value = n ? n.toLocaleString(locale, { maximumFractionDigits: 0 }) : '';
+    });
+    var method = function () { var r = $('input[name="method"]:checked', pay); return r ? r : null; };
+    // «Otro concepto» abre un campo para escribir el concepto
+    var otherField = $('#pf-otherConcept-field', pay);
+    var isOther = function () { return P.concept.value === '__other'; };
+    P.concept.addEventListener('change', function () {
+      otherField.hidden = !isOther();
+      P.otherConcept.required = isOther();
+      if (isOther()) P.otherConcept.focus();
+      else { P.otherConcept.value = ''; pErr('otherConcept', ''); }
+    });
+    var conceptText = function () { return isOther() ? P.otherConcept.value.trim() : P.concept.value; };
+    var pValidate = function () {
+      var e = {};
+      if (!P.concept.value) e.concept = T.ePConcept;
+      else if (isOther() && P.otherConcept.value.trim().length < 3) e.otherConcept = T.ePOtherConcept;
+      var n = digits(P.amount.value);
+      if (!n || n < PC.min || n > PC.max) e.amount = T.ePAmount + ' (' + money(PC.min) + ' – ' + money(PC.max) + ').';
+      if (P.name.value.trim().length < 3) e.name = T.eName;
+      if (!isEmail(P.email.value.trim())) e.email = T.eEmail;
+      if (!method()) e.method = T.ePMethod;
+      if (!P.consent.checked) e.consent = T.eConsent;
+      ['concept', 'otherConcept', 'amount', 'name', 'email', 'consent'].forEach(function (k) { pErr(k, e[k]); });
+      $('#pf-method-err', pay).textContent = e.method || '';
+      $('#pf-method-group', pay).classList.toggle('has-error', !!e.method);
+      return e;
+    };
+    $$('input, select', pay).forEach(function (el) {
+      el.addEventListener(el.type === 'checkbox' || el.type === 'radio' || el.tagName === 'SELECT' ? 'change' : 'blur', function () { if (pay.dataset.tried) pValidate(); });
+    });
+    pay.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      pay.dataset.tried = '1';
+      var errs = pValidate();
+      var first = Object.keys(errs)[0];
+      if (first) { (first === 'method' ? $('input[name="method"]', pay) : P[first]).focus(); return; }
+      var m = method();
+      var rows = [
+        [T.pConcept, conceptText()],
+        [T.pAmount, money(digits(P.amount.value))],
+        [T.pName, P.name.value.trim()],
+        [T.pEmail, P.email.value.trim()],
+        [T.pMethod, m.dataset.label]
+      ];
+      if (P.notes.value.trim()) rows.push([T.pNotes, P.notes.value.trim()]);
+      var dl = $('.summary-list', summary);
+      dl.innerHTML = '';
+      rows.forEach(function (r) {
+        var dt = document.createElement('dt'); dt.textContent = r[0];
+        var dd = document.createElement('dd'); dd.textContent = r[1];
+        dl.appendChild(dt); dl.appendChild(dd);
+      });
+      $('[data-pay-whatsapp]', summary).href = waLink([PC.intro, ''].concat(rows.map(function (r) { return r[0] + ': ' + r[1]; })).join('\n'));
+      // Aquí se conectará Wompi (widget o checkout web) cuando esté configurado
+      pay.hidden = true;
+      summary.hidden = false;
+      summary.focus();
+    });
+    $('[data-pay-edit]', summary).addEventListener('click', function () { summary.hidden = true; pay.hidden = false; P.concept.focus(); });
   }
 
   // ---------- Chat de atención (demostración) ----------

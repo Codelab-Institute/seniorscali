@@ -1,0 +1,140 @@
+{
+  "seo": {
+    "title": {
+      "es": "Contacto y visitas",
+      "en": "Contact & visits"
+    },
+    "description": {
+      "es": "Agenda una visita a Seniors en Cali. Dirección, teléfonos, WhatsApp, correo y horarios de atención.",
+      "en": "Book a visit to Seniors in Cali. Address, phone numbers, WhatsApp, email and opening hours."
+    }
+  },
+  "eyebrow": {
+    "es": "Agenda tu visita",
+    "en": "Book your visit"
+  },
+  "title": {
+    "es": "Ven a *conocernos*",
+    "en": "Come and *meet us*"
+  },
+  "intro": {
+    "es": "Déjanos tus datos y la fecha que prefieres. Nuestro equipo verificará la disponibilidad y se comunicará contigo para confirmar la visita.",
+    "en": "Leave your details and preferred date. Our team will check availability and get in touch to confirm your visit."
+  },
+  "timeSlots": {
+    "es": [
+      "9:00 a. m. – 10:00 a. m.",
+      "10:00 a. m. – 11:00 a. m.",
+      "11:00 a. m. – 12:00 m.",
+      "2:00 p. m. – 3:00 p. m.",
+      "3:00 p. m. – 4:00 p. m.",
+      "4:00 p. m. – 5:00 p. m."
+    ],
+    "en": [
+      "9:00 – 10:00 a.m.",
+      "10:00 – 11:00 a.m.",
+      "11:00 a.m. – 12:00 p.m.",
+      "2:00 – 3:00 p.m.",
+      "3:00 – 4:00 p.m.",
+      "4:00 – 5:00 p.m."
+    ]
+  },
+  "consent": {
+    "es": "Autorizo a Seniors a tratar mis datos personales para gestionar esta solicitud, conforme a la <a href=\"{data}\">Política de tratamiento de datos personales</a>.",
+    "en": "I authorize Seniors to process my personal data to handle this request, in accordance with the <a href=\"{data}\">Personal data policy</a>."
+  },
+  "success": {
+    "es": "¡Gracias! Recibimos tu solicitud. Nuestro equipo verificará la disponibilidad y te contactará para confirmar la fecha y hora de tu visita.",
+    "en": "Thank you! We received your request. Our team will check availability and contact you to confirm the date and time of your visit."
+  },
+  "actionsTitle": {
+    "es": "¿Qué deseas *hacer*?",
+    "en": "What would you like to *do*?"
+  },
+  "actionsIntro": {
+    "es": "Agenda una visita a nuestras instalaciones o realiza un pago en línea.",
+    "en": "Book a visit to our facilities or make an online payment."
+  },
+  "booking": {
+    "title": {
+      "es": "Agendar una visita",
+      "en": "Book a visit"
+    },
+    "text": {
+      "es": "Elige la fecha y el horario que prefieras. Te contactaremos para confirmar la disponibilidad.",
+      "en": "Choose your preferred date and time. We will contact you to confirm availability."
+    }
+  },
+  "payment": {
+    "title": {
+      "es": "Realizar pago",
+      "en": "Make a payment"
+    },
+    "text": {
+      "es": "Paga mensualidades y servicios de forma segura, con tarjeta, PSE o Nequi.",
+      "en": "Pay monthly fees and services securely by card, PSE or Nequi."
+    },
+    "formIntro": {
+      "es": "Completa los datos del pago. En el siguiente paso podrás pagar de forma segura con el método que elijas.",
+      "en": "Fill in the payment details. In the next step you will be able to pay securely with your chosen method."
+    },
+    "concepts": {
+      "es": [
+        "Mensualidad de estadía",
+        "Servicio de pasadía",
+        "Talleres especiales",
+        "Servicios adicionales"
+      ],
+      "en": [
+        "Residential stay monthly fee",
+        "Day program",
+        "Special workshops",
+        "Additional services"
+      ]
+    },
+    "otherConcept": {
+      "es": "Otro concepto",
+      "en": "Other concept"
+    },
+    "methods": [
+      {
+        "id": "card",
+        "icon": "credit-card",
+        "label": {
+          "es": "Tarjeta débito o crédito",
+          "en": "Debit or credit card"
+        }
+      },
+      {
+        "id": "pse",
+        "icon": "bank",
+        "label": {
+          "es": "PSE (débito a cuenta bancaria)",
+          "en": "PSE (bank account debit)"
+        }
+      },
+      {
+        "id": "nequi",
+        "icon": "smartphone",
+        "label": {
+          "es": "Nequi",
+          "en": "Nequi"
+        }
+      },
+      {
+        "id": "bancolombia",
+        "icon": "bank",
+        "label": {
+          "es": "Botón Bancolombia",
+          "en": "Bancolombia button"
+        }
+      }
+    ],
+    "minAmount": 1000,
+    "maxAmount": 50000000,
+    "pending": {
+      "es": "Los pagos en línea se habilitarán muy pronto a través de Wompi. Todavía no se ha realizado ningún cobro. Si necesitas pagar ahora, escríbenos por WhatsApp.",
+      "en": "Online payments will be enabled very soon through Wompi. No charge has been made. If you need to pay now, message us on WhatsApp."
+    }
+  }
+}

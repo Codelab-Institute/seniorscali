@@ -68,6 +68,7 @@ const files = {
 });
 ['cake', 'palette', 'puzzle', 'dumbbell', 'users', 'sparkles'].forEach((ic, k) => { files[`experiencia-${k + 1}.svg`] = photo(ic, k + 2); });
 for (let k = 0; k < 5; k++) files[`panorama-${k + 1}.svg`] = panorama(k);
+['leaf', 'hand-heart', 'smile'].forEach((ic, k) => { files[`bienestar-${k + 1}.svg`] = photo(ic, k + 3, 1200, 800); });
 
 for (const [name, svg] of Object.entries(files)) fs.writeFileSync(path.join(OUT, name), svg.replace(/\n/g, ''));
 console.log(`${Object.keys(files).length} imágenes de referencia en src/assets/images`);

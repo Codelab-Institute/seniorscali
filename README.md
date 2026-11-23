@@ -1,7 +1,7 @@
 # Seniors · Sitio web
 
 Sitio web **estático y bilingüe (español / inglés)** de **Seniors Hogar y Entretenimiento Gold**.
-No usa servidor, base de datos ni panel administrativo: los contenidos se editan en archivos de código y el sitio se genera como HTML puro, listo para cualquier hosting estático (GitHub Pages, Netlify, Cloudflare Pages, Vercel o un hosting tradicional).
+No usa servidor ni base de datos: el sitio se genera como HTML puro y se publica en GitHub Pages. Los contenidos se editan en los archivos de `src/content/` y cada cambio subido a GitHub se publica automáticamente.
 
 ## Uso
 
@@ -32,6 +32,7 @@ Abre http://localhost:3000/ (inglés en http://localhost:3000/en/). Al guardar c
 | `/servicios/` | `/en/services/` | Estadía, pasadía, talleres y servicios complementarios |
 | `/instalaciones/` | `/en/facilities/` | Galería con filtros y recorrido virtual |
 | `/experiencias/` | `/en/experiences/` | Publicaciones con filtros |
+| `/bienestar/` | `/en/wellness/` | Historias, artículos y consejos; cada publicación tiene su página (`/bienestar/<direccion>/`) |
 | `/testimonios/` | `/en/testimonials/` | Testimonios |
 | `/preguntas-frecuentes/` | `/en/faq/` | Preguntas frecuentes |
 | `/contacto/` | `/en/contact/` | Datos de contacto y formulario de visita |
@@ -41,44 +42,57 @@ El selector **ES / EN** del encabezado lleva a la misma página en el otro idiom
 
 ## Cómo editar contenidos
 
-Todo el contenido está en `src/content/`. Cada texto tiene sus dos idiomas juntos:
+Todo el contenido está en archivos JSON de `src/content/`, con los dos idiomas juntos:
 
-```js
-title: { es: 'Un lugar para *disfrutar* cada etapa de la vida', en: 'A place to *enjoy* every stage of life' }
+```json
+"title": { "es": "Un lugar para *disfrutar* cada etapa de la vida", "en": "A place to *enjoy* every stage of life" }
 ```
 
 En los títulos, las palabras entre `*asteriscos*` se destacan en cursiva turquesa.
 
 | Archivo | Contenido |
 |---|---|
-| `settings.js` | Nombre, dirección, teléfonos, WhatsApp, correo, horarios, redes sociales, dirección pública del sitio |
-| `ui.js` | Menú, direcciones de las páginas y textos de botones, formularios y mensajes |
-| `home.js` | Inicio (presentación, datos destacados, invitación final) y página Nosotros |
-| `services.js` | Servicios principales y complementarios |
-| `facilities.js` | Categorías, fotografías y espacios del recorrido virtual |
-| `experiences.js` | Experiencias y sus categorías |
-| `testimonials.js` | Testimonios |
-| `faq.js` | Preguntas frecuentes (también alimentan el chat) |
-| `contact.js` | Formulario: horarios disponibles, texto de autorización y mensaje de confirmación |
-| `legal.js` | Políticas de privacidad y de tratamiento de datos |
+| `settings.json` | Nombre, dirección, teléfonos, WhatsApp, correo, horarios, redes sociales, dirección pública del sitio |
+| `ui.json` | Menú, direcciones de las páginas y textos de botones, formularios y mensajes |
+| `home.json` | Inicio (presentación, datos destacados, invitación final) y página Nosotros |
+| `services.json` | Servicios principales y complementarios |
+| `facilities.json` | Categorías, fotografías y espacios del recorrido virtual |
+| `experiences.json` | Experiencias y sus categorías |
+| `wellness.json` | Bienestar: tipos de publicación y publicaciones (el contenido admite formato HTML básico) |
+| `testimonials.json` | Testimonios |
+| `faq.json` | Preguntas frecuentes (también alimentan el chat) |
+| `contact.json` | Formulario: horarios disponibles, texto de autorización y mensaje de confirmación |
+| `legal.json` | Políticas de privacidad y de tratamiento de datos |
 
 ### Cambiar o agregar fotografías
 
 1. Copia la foto (JPG, PNG o WebP) en `src/assets/images/`, por ejemplo `habitacion-1.jpg`.
-2. En el archivo de contenido, cambia la ruta: `image: 'images/habitacion-1.jpg'`.
+2. En el archivo de contenido, cambia la ruta: `"image": "images/habitacion-1.jpg"`.
 3. Al construir, la foto se convierte automáticamente a WebP en varios tamaños (480 a 1800 px) y cada dispositivo descarga solo el tamaño que necesita.
 
 Para el recorrido virtual usa fotos panorámicas horizontales (proporción 3:1 o más amplia).
 Las experiencias aceptan videos `.mp4` o `.webm` en el campo `media` (con `poster` como imagen de portada).
 
-## Formulario de visitas
+## Contacto: agendar visita y realizar pago
 
-Al no haber servidor, el formulario funciona de dos maneras (se configura en `src/content/settings.js` → `form.endpoint`):
+En la página de Contacto, junto a la información de contacto, hay dos botones que abren su formulario en una ventana. Las direcciones `/contacto/#agendar` y `/contacto/#pago` (en inglés `/en/contact/#agendar` y `#pago`) abren cada ventana directamente. Los botones «Agenda una visita» del resto del sitio llevan ahí.
 
-- **Sin configurar (actual):** valida los datos y abre WhatsApp con la solicitud ya redactada para enviarla al número institucional.
-- **Con un servicio de formularios** (por ejemplo, [Formspree](https://formspree.io)): pega la dirección del formulario en `form.endpoint` y las solicitudes llegarán por correo.
+### Agendar una visita (se envía por correo)
 
-En ambos casos la visita no se confirma automáticamente: el equipo verifica la disponibilidad y contacta a la familia.
+Se configura en `src/content/settings.json` → `form`:
+
+- **`email`**: correo administrativo que recibirá las solicitudes. Se envían mediante [FormSubmit](https://formsubmit.co), sin cuenta. La primera solicitud llega con un enlace de activación: hay que abrirlo una vez desde ese correo para empezar a recibirlas.
+- **`endpoint`** (opcional, tiene prioridad): dirección de otro servicio de formularios, como Formspree o Web3Forms.
+- **Ambos vacíos (actual):** el formulario avisa que el envío por correo aún no está habilitado y ofrece enviar la solicitud por WhatsApp con los datos ya escritos.
+
+El correo llega con asunto «Solicitud de visita · Seniors · nombre», los datos en tabla y la opción de responder directamente a la persona. La visita no se confirma automáticamente: el equipo verifica la disponibilidad y contacta a la familia.
+
+### Realizar pago (solo interfaz por ahora)
+
+El formulario pide concepto de pago, detalle (opcional), valor en COP, nombre del responsable, correo y método de pago (tarjeta, PSE, Nequi, Botón Bancolombia). Valida los datos y muestra un resumen, pero **todavía no cobra nada**: indica que los pagos en línea se habilitarán pronto y ofrece enviar los datos por WhatsApp.
+
+- Conceptos, métodos y valores mínimo y máximo: `src/content/contact.json` → `payment`.
+- Configuración para la integración con Wompi: `src/content/settings.json` → `payments` (`enabled`, `publicKey`, `currency`). El punto donde se conectará el checkout está marcado en `src/scripts/site.js` («Aquí se conectará Wompi»).
 
 ## Rendimiento
 
@@ -89,21 +103,17 @@ En ambos casos la visita no se confirma automáticamente: el equipo verifica la 
 
 ## Publicación
 
-```bash
-npm run build
-```
+El sitio se publica solo en **GitHub Pages** cada vez que hay un cambio en la rama `main` (con `git push`). El flujo `.github/workflows/deploy.yml` construye el sitio, lo revisa con `npm run check` y lo publica. Si la revisión encuentra un error, no publica.
 
-Sube el contenido de `dist/` al hosting. Antes, revisa `siteUrl` en `src/content/settings.js` (se usa en el sitemap, las etiquetas canónicas y las vistas previas en redes sociales).
+Requisito: en *Settings → Pages* del repositorio, **Source** debe ser **GitHub Actions**.
 
-- **Subcarpeta** (por ejemplo, GitHub Pages de proyecto `usuario.github.io/seniors/`): construye con `BASE_PATH=/seniors npm run build`.
-- **Netlify / Cloudflare Pages:** comando `npm run build`, carpeta `dist`. El archivo `_headers` ya configura la caché.
-- `dist/404.html` es la página de error, y `sitemap.xml` y `robots.txt` se generan automáticamente.
+Otros hostings: `npm run build` y sube `dist/`. En una subcarpeta construye con `BASE_PATH=/carpeta npm run build`. Con dominio propio, ajusta `siteUrl` en `src/content/settings.json`. El archivo `_headers` configura la caché en Netlify y Cloudflare Pages.
 
 ## Estructura
 
 ```
 src/
-  content/     Textos e información (español e inglés)
+  content/     Textos e información en JSON (español e inglés)
   assets/      Logotipos, favicons e imágenes originales
   styles/      site.css (diseño)
   scripts/     site.js (menú, galerías, carrusel, formulario, chat, recorrido)

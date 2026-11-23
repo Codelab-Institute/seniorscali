@@ -18,13 +18,42 @@ const stripTags = (h) => String(h || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g
 const isVideo = (u) => /\.(mp4|webm)$/i.test(u || '');
 const ic = (n, size, extra) => icon(n, Object.assign({ size: size || 20 }, extra || {}));
 
-function makeCtx(lang, pageKey, assets) {
+/*
+ * Limpia el HTML que viene de los contenidos (escritos a mano o desde el panel):
+ * solo se conservan etiquetas de texto básicas y enlaces seguros.
+ */
+const ALLOWED = new Set(['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'a', 'h2', 'h3', 'h4', 'blockquote']);
+function safeHtml(html) {
+  return String(html || '')
+    .replace(/<(script|style|iframe|object|embed|noscript|template)[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<\/?([a-z0-9]+)([^>]*)>/gi, (tag, name, attrs) => {
+      const n = name.toLowerCase();
+      if (!ALLOWED.has(n)) return '';
+      if (tag.startsWith('</')) return `</${n}>`;
+      if (n === 'a') {
+        const m = attrs.match(/href\s*=\s*"([^"]*)"/i) || attrs.match(/href\s*=\s*'([^']*)'/i);
+        const href = m ? m[1].trim() : '';
+        if (!/^(https?:|mailto:|tel:|\/|#|\{\w+\})/i.test(href)) return '<a>';
+        const ext = /^https?:/i.test(href);
+        return `<a href="${href.replace(/"/g, '&quot;')}"${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>`;
+      }
+      return `<${n}>`;
+    });
+}
+
+function makeCtx(lang, pageKey, assets, paths) {
   const t = (v) => tr(v, lang);
   const ui = (k) => tr(C.ui.t[k], lang);
   const url = (key, hash) => BASE + C.ui.pages[key][lang] + (hash ? '#' + hash : '');
   const asset = (p) => BASE + assets.file(p);
   // Reemplaza {pagina} por la dirección de esa página en el idioma actual (en textos con HTML)
   const links = (html) => String(html || '').replace(/\{(\w+)\}/g, (m, k) => (C.ui.pages[k] ? url(k) : m));
+  // Texto con HTML de los contenidos → HTML seguro con enlaces resueltos
+  const html = (v) => links(safeHtml(t(v)));
+  // Direcciones de la página actual en cada idioma (selector de idioma, canónicas)
+  const pp = paths || C.ui.pages[pageKey === '404' ? 'home' : pageKey];
+  const current = { es: pp.es, en: pp.en };
   function img(src, alt, o) {
     const opts = o || {};
     if (!src) return '';
@@ -40,7 +69,7 @@ function makeCtx(lang, pageKey, assets) {
     return `<img ${attrs}>`;
   }
   const imgUrl = (src) => BASE + assets.image(src).src;
-  return { lang, pageKey, t, ui, url, asset, img, imgUrl, links, other: lang === 'es' ? 'en' : 'es' };
+  return { lang, pageKey, t, ui, url, asset, img, imgUrl, links, html, paths: current, other: lang === 'es' ? 'en' : 'es' };
 }
 
 const waUrl = (msg) => `https://wa.me/${C.settings.whatsapp}` + (msg ? `?text=${encodeURIComponent(msg)}` : '');
@@ -83,6 +112,66 @@ function pageHero(c, data, extra) {
     ${extra || ''}
   </div>
 </section>`;
+}
+
+// ---------------- Bienestar ----------------
+const postPaths = (post) => ({ es: C.ui.pages.wellness.es + post.slug + '/', en: C.ui.pages.wellness.en + post.slug + '/' });
+const sortedPosts = () => C.wellness.posts.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+const readingTime = (html) => Math.max(1, Math.round(stripTags(html).split(/\s+/).filter(Boolean).length / 200));
+
+function postCard(c, p, i, featured) {
+  const href = BASE + postPaths(p)[c.lang];
+  const title = c.t(p.title);
+  return `<article class="post-card reveal${featured ? ' is-featured' : ''}" data-cat="${esc(p.category)}" style="--d:${(i % 6) * 70}ms">
+    <a class="post-link" href="${esc(href)}">
+      <div class="post-media">${c.img(p.image, c.t(p.imageAlt) || '', { sizes: featured ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 768px) 100vw, 33vw' })}
+        ${p.example ? `<span class="tag tag-example">${esc(c.ui('example'))}</span>` : ''}
+      </div>
+      <div class="post-body">
+        <p class="meta"><span class="tag">${esc(c.t(C.wellness.categories[p.category]) || '')}</span>${p.date ? `<time datetime="${esc(p.date)}">${esc(fmtDate(p.date, c.lang))}</time>` : ''}</p>
+        <h3>${esc(title)}</h3>
+        <p>${esc(c.t(p.excerpt))}</p>
+        <span class="link-arrow">${esc(c.ui('readMore'))}${ic('arrow-right', 18)}</span>
+      </div>
+    </a>
+  </article>`;
+}
+
+function postPage(c, p) {
+  const W = C.wellness;
+  const body = c.t(p.body);
+  const others = sortedPosts().filter((x) => x.slug !== p.slug).slice(0, 3);
+  const title = c.t(p.title);
+  return {
+    seo: { title: p.title, description: p.excerpt },
+    shareImage: p.image,
+    ogType: 'article',
+    main: `<article class="post">
+  <header class="post-hero">
+    <div class="container narrow">
+      <nav class="breadcrumb" aria-label="${esc(c.ui('breadcrumb'))}"><a href="${esc(c.url('home'))}">${esc(c.ui('home'))}</a>${ic('chevron-right', 14)}<a href="${esc(c.url('wellness'))}">${esc(c.t(C.ui.pages.wellness.menu))}</a>${ic('chevron-right', 14)}<span aria-current="page">${esc(title)}</span></nav>
+      <p class="meta"><span class="tag">${esc(c.t(W.categories[p.category]) || '')}</span>${p.date ? `<time datetime="${esc(p.date)}">${esc(fmtDate(p.date, c.lang))}</time>` : ''}<span>${readingTime(body)} ${esc(c.ui('minRead'))}</span></p>
+      <h1>${esc(title)}</h1>
+      ${p.excerpt ? `<p class="lead">${esc(c.t(p.excerpt))}</p>` : ''}
+      ${p.author ? `<p class="post-author"><span class="avatar avatar-initials" aria-hidden="true">${esc(p.author.trim().charAt(0))}</span>${esc(c.ui('by'))} ${esc(p.author)}</p>` : ''}
+    </div>
+  </header>
+  <div class="container post-cover-wrap">
+    <figure class="post-cover">${c.img(p.image, c.t(p.imageAlt) || '', { eager: true, sizes: '(max-width: 1100px) 100vw, 1100px' })}${p.example ? `<span class="tag tag-example">${esc(c.ui('example'))}</span>` : ''}</figure>
+  </div>
+  <div class="container narrow">
+    <div class="prose rich">${c.html(p.body)}</div>
+    <p class="post-back"><a class="link-arrow back" href="${esc(c.url('wellness'))}">${ic('arrow-right', 18)}${esc(c.ui('backToWellness'))}</a></p>
+  </div>
+</article>
+${others.length ? `<section class="section section-tint" aria-labelledby="more-title">
+  <div class="container">
+    ${sectionHead(c, { id: 'more-title', title: C.ui.t.moreArticles, link: C.ui.t.backToWellness, href: c.url('wellness') })}
+    <div class="post-grid">${others.map((x, i) => postCard(c, x, i)).join('')}</div>
+  </div>
+</section>` : ''}
+${ctaBand(c)}`
+  };
 }
 
 function ctaBand(c) {
@@ -204,7 +293,7 @@ function header(c) {
   const menu = Object.entries(C.ui.pages).filter(([, p]) => !p.hideInMenu);
   const langSwitch = LANGS.map((l) => {
     const active = l === c.lang;
-    const href = BASE + C.ui.pages[c.pageKey === '404' ? 'home' : c.pageKey][l];
+    const href = BASE + c.paths[l];
     return `<a href="${esc(href)}" hreflang="${l}" lang="${l}"${active ? ' class="is-active" aria-current="true"' : ''} title="${esc(C.ui.languages[l].label)}">${C.ui.languages[l].short}</a>`;
   }).join('');
   return `<header class="site-header">
@@ -218,12 +307,10 @@ function header(c) {
       </ul>
       <div class="nav-mobile-extra">
         <div class="lang-switch" role="group" aria-label="${esc(c.ui('language'))}">${langSwitch}</div>
-        <a class="btn btn-primary btn-block" href="${esc(c.url('contact', 'agendar'))}">${ic('calendar', 18)}<span>${esc(c.ui('bookVisit'))}</span></a>
       </div>
     </nav>
     <div class="header-actions">
       <div class="lang-switch lang-desktop" role="group" aria-label="${esc(c.ui('language'))}">${langSwitch}</div>
-      <a class="btn btn-primary header-cta" href="${esc(c.url('contact', 'agendar'))}">${ic('calendar', 18)}<span>${esc(c.ui('bookVisit'))}</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="${esc(c.ui('menuOpen'))}" data-open="${esc(c.ui('menuOpen'))}" data-close="${esc(c.ui('menuClose'))}">
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
       </button>
@@ -299,6 +386,19 @@ ${lb ? `<div class="lightbox" role="dialog" aria-modal="true" aria-label="${esc(
 </div>` : ''}`;
 }
 
+/*
+ * Dirección a la que se envía el formulario de visitas:
+ * - settings.form.endpoint: servicio de formularios propio (Formspree, Web3Forms…), o
+ * - settings.form.email: correo administrativo; se envía mediante FormSubmit (formsubmit.co).
+ * Si ambos están vacíos, el formulario ofrece enviar la solicitud por WhatsApp.
+ */
+function formEndpoint() {
+  const F = C.settings.form || {};
+  if (F.endpoint) return F.endpoint;
+  if (F.email) return 'https://formsubmit.co/ajax/' + encodeURIComponent(F.email);
+  return '';
+}
+
 // Datos que necesita el JavaScript de la página
 function pageData(c) {
   const d = {
@@ -306,14 +406,19 @@ function pageData(c) {
     whatsapp: C.settings.whatsapp,
     phone: C.settings.phones[0],
     contactUrl: c.url('contact', 'agendar'),
-    formEndpoint: C.settings.form.endpoint || '',
+    formEndpoint: formEndpoint(),
     i18n: {},
     faqs: C.faq.items.map((f) => ({ q: c.t(f.q), a: stripTags(c.links(c.t(f.a))) })),
     galleries: {}
   };
   ['fSending', 'fSubmit', 'eName', 'ePhone', 'eEmail', 'eService', 'eDate', 'eDatePast', 'eTime', 'eConsent', 'eSend', 'okWhatsapp', 'waGreeting',
     'fName', 'fPhone', 'fEmail', 'fService', 'fDate', 'fTime', 'fMessage',
-    'chatHello', 'chatThanks', 'chatBook', 'chatBookLink', 'chatFallback', 'chatOr', 'menuOpen', 'menuClose'].forEach((k) => { d.i18n[k] = c.ui(k); });
+    'chatHello', 'chatThanks', 'chatBook', 'chatBookLink', 'chatFallback', 'chatOr', 'menuOpen', 'menuClose',
+    'eNotConfigured', 'sendWhatsapp', 'ePConcept', 'ePOtherConcept', 'ePAmount', 'ePMethod', 'pConcept', 'pNotes', 'pAmount', 'pName', 'pEmail', 'pMethod'].forEach((k) => { d.i18n[k] = c.ui(k); });
+  if (c.pageKey === 'contact') {
+    const P = C.contact.payment;
+    d.payment = { min: P.minAmount, max: P.maxAmount, currency: C.settings.payments.currency, enabled: !!C.settings.payments.enabled, intro: c.t({ es: 'Hola, quiero realizar un pago a Seniors.', en: 'Hello, I would like to make a payment to Seniors.' }) };
+  }
   d.i18n.success = c.t(C.contact.success);
   const photoData = (list) => list.map((p) => ({ src: c.imgUrl(p.image), title: c.t(p.title), cat: c.t(C.facilities.categories[p.category]) }));
   const expData = (list) => list.map((x) => ({ src: isVideo(x.media) ? c.asset(x.media) : c.imgUrl(x.media), poster: x.poster ? c.imgUrl(x.poster) : '', video: isVideo(x.media), title: c.t(x.title), text: c.t(x.text), cat: c.t(C.experiences.categories[x.category]), date: fmtDate(x.date, c.lang) }));
@@ -392,7 +497,14 @@ const PAGES = {
   </div>
 </section>
 
-<section class="section" aria-labelledby="testimonials-title">
+${C.wellness.posts.length ? `<section class="section" aria-labelledby="wellness-title">
+  <div class="container">
+    ${sectionHead(c, { id: 'wellness-title', eyebrow: T.wellness.eyebrow, title: T.wellness.title, link: T.wellness.link, href: c.url('wellness') })}
+    <div class="post-grid">${sortedPosts().slice(0, 3).map((p, i) => postCard(c, p, i)).join('')}</div>
+  </div>
+</section>` : ''}
+
+<section class="section section-tint" aria-labelledby="testimonials-title">
   <div class="container">
     ${sectionHead(c, { id: 'testimonials-title', eyebrow: T.testimonials.eyebrow, title: T.testimonials.title, link: T.testimonials.link, href: c.url('testimonials') })}
     ${testimonialCarousel(c)}
@@ -515,6 +627,23 @@ ${ctaBand(c)}`
     };
   },
 
+  wellness(c) {
+    const W = C.wellness;
+    const list = sortedPosts();
+    const used = [...new Set(list.map((p) => p.category))];
+    return {
+      seo: W.seo,
+      main: `${pageHero(c, W)}
+<section class="section">
+  <div class="container">
+    ${chips(c, 'wellness', W.categories, used)}
+    ${list.length ? `<div class="post-grid is-listing" data-filter-target="wellness">${list.map((p, i) => postCard(c, p, i, i === 0)).join('')}</div>` : `<p class="lead center">${esc(c.ui('noPosts'))}</p>`}
+  </div>
+</section>
+${ctaBand(c)}`
+    };
+  },
+
   testimonials(c) {
     return {
       seo: C.testimonials.seo,
@@ -534,7 +663,7 @@ ${ctaBand(c)}`
     <div class="accordion">
       ${F.items.map((f, i) => `<div class="acc-item reveal" style="--d:${i * 40}ms">
         <h2><button type="button" class="acc-btn" aria-expanded="false" aria-controls="faq-${i}" id="faq-btn-${i}"><span>${esc(c.t(f.q))}</span><span class="acc-icon" aria-hidden="true">${ic('plus', 20)}</span></button></h2>
-        <div class="acc-panel" id="faq-${i}" role="region" aria-labelledby="faq-btn-${i}" hidden><div class="rich">${c.links(c.t(f.a))}</div></div>
+        <div class="acc-panel" id="faq-${i}" role="region" aria-labelledby="faq-btn-${i}" hidden><div class="rich">${c.html(f.a)}</div></div>
       </div>`).join('')}
     </div>
     <aside class="help-card reveal">
@@ -552,13 +681,20 @@ ${ctaBand(c)}`
   contact(c) {
     const K = C.contact;
     const today = new Date(Date.now() - 5 * 3600e3).toISOString().slice(0, 10);
-    const consent = c.t(K.consent).replace('{data}', esc(c.url('data')));
+    const consent = safeHtml(c.t(K.consent)).replace('{data}', esc(c.url('data')));
     const field = (id, label, input, cls) => `<div class="field${cls ? ' ' + cls : ''}"><label for="bf-${id}">${label}</label>${input}<p class="field-error" id="bf-${id}-err" aria-live="polite"></p></div>`;
     const req = ' <span class="req" aria-hidden="true">*</span>';
+    const P = K.payment;
+    const pf = (id, label, input, cls) => `<div class="field${cls ? ' ' + cls : ''}"><label for="pf-${id}">${label}</label>${input}<p class="field-error" id="pf-${id}-err" aria-live="polite"></p></div>`;
+    const action = (id, modal, icon, data, cls) => `<button type="button" class="action-card${cls ? ' ' + cls : ''}" id="${id}" data-modal-open="${modal}" aria-haspopup="dialog">
+        <span class="action-icon">${ic(icon, 26)}</span>
+        <span class="action-body"><strong>${esc(c.t(data.title))}</strong><span>${esc(c.t(data.text))}</span></span>
+        <span class="action-arrow">${ic('arrow-right', 20)}</span>
+      </button>`;
     return {
       seo: K.seo,
       main: `${pageHero(c, K)}
-<section class="section contact-section" id="agendar">
+<section class="section contact-section">
   <div class="container contact-grid">
     <aside class="contact-card reveal">
       <h2>${esc(c.ui('contactInfo'))}</h2>
@@ -569,7 +705,20 @@ ${ctaBand(c)}`
       </div>
       <p class="contact-faq">${ic('help-circle', 18)}<a href="${esc(c.url('faq'))}">${esc(c.t(C.ui.pages.faq.menu))}</a></p>
     </aside>
-    <form class="booking-form reveal" id="booking-form" novalidate aria-labelledby="form-title">
+    <div class="contact-options reveal">
+      <h2>${rich(c.t(K.actionsTitle))}</h2>
+      <p class="lead">${esc(c.t(K.actionsIntro))}</p>
+      ${action('agendar', 'booking-modal', 'calendar', K.booking)}
+      ${action('pago', 'payment-modal', 'credit-card', P, 'is-pay')}
+      <p class="secure-note">${ic('lock', 16)}<span>${esc(c.ui('pSecure'))}</span></p>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="form-title" hidden>
+  <div class="modal-card">
+    <button type="button" class="icon-btn modal-close" data-modal-close aria-label="${esc(c.ui('close'))}">${ic('x')}</button>
+    <form class="booking-form" id="booking-form" novalidate aria-labelledby="form-title">
       <h2 id="form-title">${esc(c.ui('formTitle'))}</h2>
       <div class="form-grid">
         ${field('name', esc(c.ui('fName')) + req, '<input id="bf-name" name="name" type="text" autocomplete="name" required maxlength="120">', 'span-2')}
@@ -585,12 +734,59 @@ ${ctaBand(c)}`
           <p class="field-error" id="bf-consent-err" aria-live="polite"></p>
         </div>
       </div>
-      <button class="btn btn-primary btn-lg btn-block" type="submit">${ic(C.settings.form.endpoint ? 'send' : 'whatsapp', 18)}<span>${esc(c.ui('fSubmit'))}</span></button>
-      <p class="form-note">${esc(c.ui(C.settings.form.endpoint ? 'fNote' : 'fNoteWhatsapp'))}</p>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">${ic('send', 18)}<span>${esc(c.ui('fSubmit'))}</span></button>
+      <p class="form-note">${esc(c.ui('fNote'))}</p>
       <div class="form-status" role="status" aria-live="polite"></div>
     </form>
   </div>
-</section>`
+</div>
+
+<div class="modal" id="payment-modal" role="dialog" aria-modal="true" aria-labelledby="pay-title" hidden>
+  <div class="modal-card">
+    <button type="button" class="icon-btn modal-close" data-modal-close aria-label="${esc(c.ui('close'))}">${ic('x')}</button>
+    <form class="booking-form" id="payment-form" novalidate aria-labelledby="pay-title">
+      <h2 id="pay-title">${esc(c.t(P.title))}</h2>
+      <p class="form-intro">${esc(c.t(P.formIntro))}</p>
+      <div class="form-grid">
+        ${pf('concept', esc(c.ui('pConcept')) + req, `<select id="pf-concept" name="concept" required aria-controls="pf-otherConcept-field"><option value="">${esc(c.ui('pConceptPick'))}</option>${c.t(P.concepts).map((x) => `<option>${esc(x)}</option>`).join('')}<option value="__other">${esc(c.t(P.otherConcept))}</option></select>`, 'span-2')}
+        <div class="field span-2 other-concept" id="pf-otherConcept-field" hidden>
+          <label for="pf-otherConcept">${esc(c.ui('pOtherConcept'))}${req}</label>
+          <input id="pf-otherConcept" name="otherConcept" type="text" maxlength="120" placeholder="${esc(c.ui('pOtherConceptHint'))}">
+          <p class="field-error" id="pf-otherConcept-err" aria-live="polite"></p>
+        </div>
+        ${pf('amount', esc(c.ui('pAmount')) + req, `<div class="money"><span aria-hidden="true">$</span><input id="pf-amount" name="amount" type="text" inputmode="numeric" autocomplete="off" required aria-describedby="pf-amount-err"><span aria-hidden="true">${esc(C.settings.payments.currency)}</span></div>`, 'span-2')}
+        ${pf('name', esc(c.ui('pName')) + req, '<input id="pf-name" name="name" type="text" autocomplete="name" required maxlength="120">')}
+        ${pf('email', esc(c.ui('pEmail')) + req, '<input id="pf-email" name="email" type="email" autocomplete="email" required maxlength="160">')}
+        <fieldset class="field span-2 methods" id="pf-method-group" aria-describedby="pf-method-err">
+          <legend>${esc(c.ui('pMethod'))}${req}</legend>
+          <div class="method-grid">
+            ${P.methods.map((m) => `<label class="method"><input type="radio" name="method" value="${esc(m.id)}" data-label="${esc(c.t(m.label))}"><span class="method-box"><span class="method-icon">${ic(m.icon, 22)}</span><span>${esc(c.t(m.label))}</span></span></label>`).join('')}
+          </div>
+          <p class="field-error" id="pf-method-err" aria-live="polite"></p>
+        </fieldset>
+        <div class="field span-2">
+          <label for="pf-notes">${esc(c.ui('pNotes'))} <small>(${esc(c.ui('optional'))})</small></label>
+          <textarea id="pf-notes" name="notes" rows="3" maxlength="500" placeholder="${esc(c.ui('pNotesHint'))}"></textarea>
+        </div>
+        <div class="field span-2">
+          <label class="check"><input type="checkbox" name="consent" id="pf-consent" required><span>${consent}</span></label>
+          <p class="field-error" id="pf-consent-err" aria-live="polite"></p>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">${ic('lock', 18)}<span>${esc(c.ui('pSubmit'))}</span></button>
+      <p class="form-note">${ic('shield', 16)} ${esc(c.ui('pSecure'))}</p>
+    </form>
+    <div class="pay-summary" id="pay-summary" hidden tabindex="-1">
+      <h2>${esc(c.ui('pSummary'))}</h2>
+      <dl class="summary-list"></dl>
+      <div class="pay-pending" role="status">${ic('clock', 20)}<p>${esc(c.t(P.pending))}</p></div>
+      <div class="summary-actions">
+        <button type="button" class="btn btn-outline" data-pay-edit>${ic('edit', 18)}<span>${esc(c.ui('pEdit'))}</span></button>
+        <a class="btn btn-whatsapp" data-pay-whatsapp href="${esc(waUrl(''))}" target="_blank" rel="noopener noreferrer">${ic('whatsapp', 18)}<span>${esc(c.ui('sendWhatsapp'))}</span></a>
+      </div>
+    </div>
+  </div>
+</div>`
     };
   },
 
@@ -602,7 +798,7 @@ function legalPage(c, L) {
   return {
     seo: { title: L.title, description: { es: '', en: '' } },
     main: `${pageHero(c, { title: L.title })}
-<section class="section"><article class="container narrow legal rich">${c.t(L.html)}</article></section>`
+<section class="section"><article class="container narrow legal rich">${c.html(L.html)}</article></section>`
   };
 }
 
@@ -628,10 +824,10 @@ function documentHtml(c, page, assets, opts) {
   const title = isHome ? titleTxt : `${titleTxt} · ${S.shortName}`;
   const desc = c.t(seo.description) || c.t(C.home.seo.description);
   const site = S.siteUrl.replace(/\/$/, '');
-  const canonical = c.pageKey === '404' ? '' : site + BASE + C.ui.pages[c.pageKey][c.lang];
-  const alternates = c.pageKey === '404' ? '' : LANGS.map((l) => `<link rel="alternate" hreflang="${C.ui.languages[l].htmlLang}" href="${esc(site + BASE + C.ui.pages[c.pageKey][l])}">`).join('\n') +
-    `\n<link rel="alternate" hreflang="x-default" href="${esc(site + BASE + C.ui.pages[c.pageKey].es)}">`;
-  const shareImg = site + BASE + assets.image(S.shareImage).src;
+  const canonical = c.pageKey === '404' ? '' : site + BASE + c.paths[c.lang];
+  const alternates = c.pageKey === '404' ? '' : LANGS.map((l) => `<link rel="alternate" hreflang="${C.ui.languages[l].htmlLang}" href="${esc(site + BASE + c.paths[l])}">`).join('\n') +
+    `\n<link rel="alternate" hreflang="x-default" href="${esc(site + BASE + c.paths.es)}">`;
+  const shareImg = site + BASE + assets.image(page.shareImage || S.shareImage).src;
   const ld = isHome ? `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org', '@type': 'LocalBusiness', name: S.name, description: desc, url: site + BASE + C.ui.pages.home[c.lang],
     telephone: S.phones[0], email: S.email, image: shareImg, sameAs: S.social.map((s) => s.url),
@@ -649,7 +845,7 @@ function documentHtml(c, page, assets, opts) {
 ${canonical ? `<link rel="canonical" href="${esc(canonical)}">` : '<meta name="robots" content="noindex">'}
 ${alternates}
 <meta name="theme-color" content="#52665D">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${page.ogType || 'website'}">
 <meta property="og:site_name" content="${esc(S.name)}">
 <meta property="og:locale" content="${C.ui.languages[c.lang].locale}">
 <meta property="og:title" content="${esc(title)}">
@@ -690,6 +886,11 @@ function renderAll(assets, opts) {
       const c = makeCtx(lang, key, assets);
       out.push({ path: C.ui.pages[key][lang], html: documentHtml(c, PAGES[key](c), assets, opts) });
     }
+    // Una página por cada publicación de Bienestar
+    for (const post of C.wellness.posts) {
+      const c = makeCtx(lang, 'wellness', assets, postPaths(post));
+      out.push({ path: postPaths(post)[lang], html: documentHtml(c, postPage(c, post), assets, opts) });
+    }
   }
   // Página 404 (en español con enlace al inglés en el selector)
   const c404 = makeCtx('es', '404', assets);
@@ -705,6 +906,13 @@ function sitemap() {
     for (const lang of LANGS) {
       const alts = LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${C.ui.languages[l].htmlLang}" href="${esc(site + C.ui.pages[key][l])}"/>`).join('');
       urls.push(`<url><loc>${esc(site + C.ui.pages[key][lang])}</loc><lastmod>${today}</lastmod>${alts}</url>`);
+    }
+  }
+  for (const post of C.wellness.posts) {
+    const p = postPaths(post);
+    for (const lang of LANGS) {
+      const alts = LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${C.ui.languages[l].htmlLang}" href="${esc(site + p[l])}"/>`).join('');
+      urls.push(`<url><loc>${esc(site + p[lang])}</loc><lastmod>${post.date || today}</lastmod>${alts}</url>`);
     }
   }
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}\n</urlset>\n`;

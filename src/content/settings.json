@@ -1,0 +1,59 @@
+{
+  "siteUrl": "https://www.seniorscali.co",
+  "name": "Seniors Hogar y Entretenimiento Gold",
+  "shortName": "Seniors",
+  "address": "Carrera 115A # 16-115, Cali, Valle del Cauca, Colombia",
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Carrera+115A+%2316-115+Cali+Colombia",
+  "phones": [
+    "+57 313 544 9717",
+    "+57 317 854 2033",
+    "+57 602 395 8956"
+  ],
+  "email": "seniorscali@gmail.com",
+  "whatsapp": "573135449717",
+  "whatsappMessage": {
+    "es": "Hola, quiero más información sobre Seniors.",
+    "en": "Hello, I would like more information about Seniors."
+  },
+  "hours": {
+    "es": [
+      "Pasadía: lunes a domingo, 9:00 a. m. – 5:00 p. m.",
+      "Visitas a las instalaciones: con cita previa"
+    ],
+    "en": [
+      "Day program: Monday to Sunday, 9:00 a.m. – 5:00 p.m.",
+      "Facility tours: by appointment"
+    ]
+  },
+  "social": [
+    {
+      "name": "Facebook",
+      "icon": "facebook",
+      "url": "https://www.facebook.com/seniorscali"
+    },
+    {
+      "name": "Instagram",
+      "icon": "instagram",
+      "url": "https://www.instagram.com/seniorscali/"
+    }
+  ],
+  "form": {
+    "email": "",
+    "endpoint": ""
+  },
+  "brand": {
+    "logoLight": "brand/logo-claro.png",
+    "logoDark": "brand/logo-oscuro.png",
+    "isotype": "brand/isotipo.png",
+    "favicon": "brand/favicon-192.png",
+    "favicon32": "brand/favicon-32.png",
+    "appleIcon": "brand/favicon-180.png"
+  },
+  "shareImage": "images/hero.svg",
+  "payments": {
+    "provider": "wompi",
+    "enabled": false,
+    "currency": "COP",
+    "publicKey": ""
+  }
+}

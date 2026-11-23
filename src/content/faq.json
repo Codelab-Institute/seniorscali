@@ -1,0 +1,128 @@
+{
+  "seo": {
+    "title": {
+      "es": "Preguntas frecuentes",
+      "en": "Frequently asked questions"
+    },
+    "description": {
+      "es": "Resolvemos las dudas más comunes sobre los servicios, requisitos, alimentación, visitas y costos de Seniors en Cali.",
+      "en": "Answers to common questions about Seniors’ services, requirements, meals, visits and costs in Cali."
+    }
+  },
+  "eyebrow": {
+    "es": "Preguntas frecuentes",
+    "en": "FAQ"
+  },
+  "title": {
+    "es": "Resolvemos *tus dudas*",
+    "en": "We answer *your questions*"
+  },
+  "intro": {
+    "es": "Aclaremos juntos las dudas más comunes sobre nuestros servicios.",
+    "en": "Let’s clear up the most common questions about our services."
+  },
+  "items": [
+    {
+      "q": {
+        "es": "¿Qué servicios ofrece Seniors?",
+        "en": "What services does Seniors offer?"
+      },
+      "a": {
+        "es": "<p>Ofrecemos tres planes principales: <strong>Estadía</strong> (acomodación permanente), <strong>Pasadía</strong> (centro día de lunes a domingo) y <strong>Talleres especiales</strong> por temporadas. Además, contamos con enfermería, fisioterapia, alimentación, lavandería y actividades de entretenimiento.</p>",
+        "en": "<p>We offer three main plans: <strong>Residential stay</strong>, <strong>Day program</strong> (Monday to Sunday) and seasonal <strong>Special workshops</strong>. We also provide nursing, physical therapy, meals, laundry and entertainment activities.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Qué incluye el servicio de estadía?",
+        "en": "What does the residential stay include?"
+      },
+      "a": {
+        "es": "<p>Acomodación en habitaciones 100 % dotadas, compartidas o individuales, con atención personalizada, alimentación, enfermería, fisioterapia y terapia ocupacional, lavandería y programación recreativa.</p>",
+        "en": "<p>Accommodation in fully furnished shared or private rooms, with personalized care, meals, nursing, physical and occupational therapy, laundry and recreational activities.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Cómo funciona el servicio de pasadía?",
+        "en": "How does the day program work?"
+      },
+      "a": {
+        "es": "<p>Es un servicio de centro día para adultos mayores con toda nuestra programación especial, disponible de lunes a domingo de 9:00 a. m. a 5:00 p. m.</p>",
+        "en": "<p>It is a day center service for older adults with our full special program, available Monday to Sunday from 9:00 a.m. to 5:00 p.m.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Qué requisitos se necesitan para ingresar?",
+        "en": "What are the admission requirements?"
+      },
+      "a": {
+        "es": "<p>Es necesario contar con EPS y algún servicio de emergencia médica. Si no los tienen, en Seniors ayudamos a tramitarlos. Al ingresar se firma un contrato con acuerdos y compromisos de ambas partes; no hay un tiempo mínimo de permanencia.</p>",
+        "en": "<p>Residents need health insurance (EPS) and an emergency medical service. If they don’t have them, Seniors can help arrange them. A contract with mutual agreements is signed on admission; there is no minimum length of stay.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Qué tipo de alimentación reciben los residentes?",
+        "en": "What kind of meals do residents receive?"
+      },
+      "a": {
+        "es": "<p>Una dieta balanceada avalada por nutricionista y por el médico que acompaña a la institución. Se respetan las necesidades especiales de cada residente.</p>",
+        "en": "<p>A balanced diet approved by a nutritionist and by the institution’s physician. Each resident’s special needs are respected.</p>"
+      }
+    },
+    {
+      "pending": true,
+      "q": {
+        "es": "¿Cómo se manejan las necesidades médicas?",
+        "en": "How are medical needs handled?"
+      },
+      "a": {
+        "es": "<p>Contamos con servicio de enfermería y fisioterapia. Las necesidades médicas se coordinan con la EPS y el servicio de emergencia de cada residente. También es posible contar con cuidadora personal siguiendo los protocolos de la institución.</p>",
+        "en": "<p>We provide nursing and physical therapy. Medical needs are coordinated with each resident’s health insurer (EPS) and emergency service. Residents may also have a personal caregiver, following the institution’s protocols.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Las familias pueden visitar a los residentes?",
+        "en": "Can families visit residents?"
+      },
+      "a": {
+        "es": "<p>Sí. Nuestra mayor alegría es preservar los vínculos familiares: las familias pueden visitar a los residentes y estos pueden salir con sus familiares a paseos, visitas y festividades. Las visitas se coordinan previamente.</p>",
+        "en": "<p>Yes. Our greatest joy is preserving family bonds: families can visit residents, and residents can go out with their families for outings, visits and celebrations. Visits are scheduled in advance.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Cómo puedo agendar una visita?",
+        "en": "How can I book a visit?"
+      },
+      "a": {
+        "es": "<p>Completa el <a href=\"{contact}#agendar\">formulario de agendamiento</a> o escríbenos por WhatsApp. Nuestro equipo verificará la disponibilidad y te contactará para confirmar.</p>",
+        "en": "<p>Fill out the <a href=\"{contact}#agendar\">booking form</a> or message us on WhatsApp. Our team will check availability and contact you to confirm.</p>"
+      }
+    },
+    {
+      "pending": true,
+      "q": {
+        "es": "¿Cuáles son los costos?",
+        "en": "How much does it cost?"
+      },
+      "a": {
+        "es": "<p>Los costos dependen del plan y de las necesidades de cada persona. Comunícate con nosotros por teléfono o WhatsApp para recibir una cotización personalizada.</p>",
+        "en": "<p>Costs depend on the plan and each person’s needs. Contact us by phone or WhatsApp for a personalized quote.</p>"
+      }
+    },
+    {
+      "q": {
+        "es": "¿Dónde se encuentra ubicado Seniors?",
+        "en": "Where is Seniors located?"
+      },
+      "a": {
+        "es": "<p>Estamos en la Carrera 115A # 16-115, Cali, Valle del Cauca, Colombia.</p>",
+        "en": "<p>We are located at Carrera 115A # 16-115, Cali, Valle del Cauca, Colombia.</p>"
+      }
+    }
+  ]
+}

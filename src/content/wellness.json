@@ -1,0 +1,112 @@
+{
+  "seo": {
+    "title": {
+      "es": "Bienestar",
+      "en": "Wellness"
+    },
+    "description": {
+      "es": "Historias, artículos y consejos sobre el bienestar de los adultos mayores y sus familias, desde la comunidad Seniors en Cali.",
+      "en": "Stories, articles and tips about the well-being of older adults and their families, from the Seniors community in Cali."
+    }
+  },
+  "eyebrow": {
+    "es": "Bienestar",
+    "en": "Wellness"
+  },
+  "title": {
+    "es": "Historias y consejos para *vivir bien*",
+    "en": "Stories and tips for *living well*"
+  },
+  "intro": {
+    "es": "Un espacio para compartir historias de nuestra comunidad, artículos y recomendaciones para acompañar cada etapa de la vida.",
+    "en": "A space to share stories from our community, articles and recommendations to support every stage of life."
+  },
+  "categories": {
+    "historias": {
+      "es": "Historias",
+      "en": "Stories"
+    },
+    "articulos": {
+      "es": "Artículos",
+      "en": "Articles"
+    },
+    "consejos": {
+      "es": "Consejos",
+      "en": "Tips"
+    }
+  },
+  "posts": [
+    {
+      "slug": "habitos-envejecimiento-activo",
+      "category": "articulos",
+      "date": "2026-11-15",
+      "example": true,
+      "author": "Equipo Seniors",
+      "image": "images/bienestar-1.svg",
+      "imageAlt": {
+        "es": "Adultos mayores caminando en un jardín",
+        "en": "Older adults walking in a garden"
+      },
+      "title": {
+        "es": "Cinco hábitos para un envejecimiento activo",
+        "en": "Five habits for active aging"
+      },
+      "excerpt": {
+        "es": "Pequeñas rutinas diarias que ayudan a mantener el cuerpo, la mente y las relaciones en movimiento.",
+        "en": "Small daily routines that help keep body, mind and relationships active."
+      },
+      "body": {
+        "es": "<p>Envejecer de forma activa no depende de grandes cambios, sino de hábitos sencillos que se repiten cada día. Estas son algunas recomendaciones generales que pueden marcar la diferencia.</p><h2>1. Moverse todos los días</h2><p>Caminar, estirarse o hacer ejercicios suaves ayuda a conservar la movilidad, el equilibrio y el ánimo. Lo importante es la constancia, no la intensidad.</p><h2>2. Comer de forma balanceada</h2><p>Una alimentación variada, con frutas, verduras, proteínas y suficiente agua, aporta energía y bienestar.</p><h2>3. Cultivar los vínculos</h2><p>Conversar, compartir una comida o participar en actividades grupales fortalece la salud emocional.</p><h2>4. Mantener la mente activa</h2><p>Leer, jugar juegos de mesa, aprender algo nuevo o recordar historias estimula la memoria y la atención.</p><h2>5. Descansar bien</h2><p>Un buen descanso y rutinas tranquilas en la noche ayudan a empezar cada día con mejor disposición.</p><p><strong>Importante:</strong> estas son recomendaciones generales. Ante cualquier cambio de rutina, consulta con el equipo de salud de cada persona.</p>",
+        "en": "<p>Active aging doesn’t depend on big changes, but on simple habits repeated every day. Here are some general recommendations that can make a difference.</p><h2>1. Move every day</h2><p>Walking, stretching or gentle exercise helps maintain mobility, balance and mood. Consistency matters more than intensity.</p><h2>2. Eat a balanced diet</h2><p>Varied meals with fruit, vegetables, protein and enough water provide energy and well-being.</p><h2>3. Nurture relationships</h2><p>Talking, sharing a meal or joining group activities strengthens emotional health.</p><h2>4. Keep the mind active</h2><p>Reading, playing board games, learning something new or sharing memories stimulates memory and attention.</p><h2>5. Rest well</h2><p>Good rest and calm evening routines help start each day in a better mood.</p><p><strong>Important:</strong> these are general recommendations. Before changing any routine, consult each person’s health team.</p>"
+      }
+    },
+    {
+      "slug": "acompanar-la-llegada-a-un-hogar",
+      "category": "consejos",
+      "date": "2026-11-02",
+      "example": true,
+      "author": "Equipo Seniors",
+      "image": "images/bienestar-2.svg",
+      "imageAlt": {
+        "es": "Familia acompañando a una adulta mayor",
+        "en": "Family supporting an older woman"
+      },
+      "title": {
+        "es": "Cómo acompañar a un ser querido en su llegada a un hogar",
+        "en": "How to support a loved one moving into a care home"
+      },
+      "excerpt": {
+        "es": "Ideas para que la transición sea tranquila, cercana y respetuosa para toda la familia.",
+        "en": "Ideas to make the transition calm, warm and respectful for the whole family."
+      },
+      "body": {
+        "es": "<p>La llegada a un hogar es un cambio importante, tanto para quien llega como para su familia. Acompañar este momento con paciencia y cercanía ayuda a que la adaptación sea más tranquila.</p><h2>Conversar con anticipación</h2><p>Hablar sobre el cambio, escuchar las inquietudes y resolver dudas juntos genera confianza.</p><h2>Conocer el lugar antes</h2><p>Visitar las instalaciones y conocer al equipo permite familiarizarse con los espacios y las rutinas.</p><h2>Llevar objetos significativos</h2><p>Fotografías, una manta favorita o pequeños recuerdos hacen que el nuevo espacio se sienta propio.</p><h2>Mantener el contacto</h2><p>Las visitas, las llamadas y la participación en actividades especiales fortalecen el vínculo familiar.</p>",
+        "en": "<p>Moving into a care home is an important change, both for the person and for their family. Supporting this moment with patience and closeness makes adapting easier.</p><h2>Talk about it in advance</h2><p>Discussing the change, listening to concerns and answering questions together builds trust.</p><h2>Visit beforehand</h2><p>Touring the facilities and meeting the team helps people become familiar with the spaces and routines.</p><h2>Bring meaningful items</h2><p>Photos, a favorite blanket or small keepsakes make the new space feel like home.</p><h2>Stay in touch</h2><p>Visits, calls and joining special activities strengthen family bonds.</p>"
+      }
+    },
+    {
+      "slug": "historia-de-ejemplo",
+      "category": "historias",
+      "date": "2026-10-20",
+      "example": true,
+      "author": "Equipo Seniors",
+      "image": "images/bienestar-3.svg",
+      "imageAlt": {
+        "es": "Residente sonriendo durante una actividad",
+        "en": "Resident smiling during an activity"
+      },
+      "title": {
+        "es": "Historia de ejemplo: un nuevo comienzo",
+        "en": "Sample story: a new beginning"
+      },
+      "excerpt": {
+        "es": "Espacio de ejemplo para compartir historias reales de residentes y familias, con su autorización.",
+        "en": "Sample space to share real stories from residents and families, with their permission."
+      },
+      "body": {
+        "es": "<p>Esta es una publicación de ejemplo. Aquí podrás compartir historias reales de residentes, familias y del equipo de Seniors, siempre con la autorización de las personas involucradas.</p><p>Para cambiarla, edita el título, el resumen, la imagen y este texto en el archivo src/content/wellness.json, y elige si se trata de una historia, un artículo o un consejo.</p>",
+        "en": "<p>This is a sample post. Here you can share real stories from residents, families and the Seniors team, always with the permission of the people involved.</p><p>To change it, edit the title, summary, image and this text in src/content/wellness.json, and choose whether it is a story, an article or a tip.</p>"
+      }
+    }
+  ]
+}

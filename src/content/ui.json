@@ -1,0 +1,563 @@
+{
+  "languages": {
+    "es": {
+      "label": "Español",
+      "short": "ES",
+      "locale": "es_CO",
+      "htmlLang": "es-CO"
+    },
+    "en": {
+      "label": "English",
+      "short": "EN",
+      "locale": "en_US",
+      "htmlLang": "en"
+    }
+  },
+  "pages": {
+    "home": {
+      "es": "/",
+      "en": "/en/",
+      "menu": {
+        "es": "Inicio",
+        "en": "Home"
+      }
+    },
+    "about": {
+      "es": "/nosotros/",
+      "en": "/en/about/",
+      "menu": {
+        "es": "Nosotros",
+        "en": "About us"
+      }
+    },
+    "services": {
+      "es": "/servicios/",
+      "en": "/en/services/",
+      "menu": {
+        "es": "Servicios",
+        "en": "Services"
+      }
+    },
+    "facilities": {
+      "es": "/instalaciones/",
+      "en": "/en/facilities/",
+      "menu": {
+        "es": "Instalaciones",
+        "en": "Facilities"
+      }
+    },
+    "experiences": {
+      "es": "/experiencias/",
+      "en": "/en/experiences/",
+      "menu": {
+        "es": "Experiencias",
+        "en": "Experiences"
+      }
+    },
+    "wellness": {
+      "es": "/bienestar/",
+      "en": "/en/wellness/",
+      "menu": {
+        "es": "Bienestar",
+        "en": "Wellness"
+      }
+    },
+    "testimonials": {
+      "es": "/testimonios/",
+      "en": "/en/testimonials/",
+      "menu": {
+        "es": "Testimonios",
+        "en": "Testimonials"
+      }
+    },
+    "contact": {
+      "es": "/contacto/",
+      "en": "/en/contact/",
+      "menu": {
+        "es": "Contacto",
+        "en": "Contact"
+      }
+    },
+    "faq": {
+      "es": "/preguntas-frecuentes/",
+      "en": "/en/faq/",
+      "menu": {
+        "es": "Preguntas frecuentes",
+        "en": "FAQ"
+      },
+      "hideInMenu": true
+    },
+    "privacy": {
+      "es": "/politica-de-privacidad/",
+      "en": "/en/privacy-policy/",
+      "menu": {
+        "es": "Política de privacidad",
+        "en": "Privacy policy"
+      },
+      "hideInMenu": true
+    },
+    "data": {
+      "es": "/tratamiento-de-datos/",
+      "en": "/en/data-policy/",
+      "menu": {
+        "es": "Tratamiento de datos personales",
+        "en": "Personal data policy"
+      },
+      "hideInMenu": true
+    }
+  },
+  "t": {
+    "skip": {
+      "es": "Saltar al contenido",
+      "en": "Skip to content"
+    },
+    "home": {
+      "es": "Inicio",
+      "en": "Home"
+    },
+    "goHome": {
+      "es": "ir al inicio",
+      "en": "go to home page"
+    },
+    "menuOpen": {
+      "es": "Abrir menú",
+      "en": "Open menu"
+    },
+    "menuClose": {
+      "es": "Cerrar menú",
+      "en": "Close menu"
+    },
+    "mainNav": {
+      "es": "Navegación principal",
+      "en": "Main navigation"
+    },
+    "breadcrumb": {
+      "es": "Ruta de navegación",
+      "en": "Breadcrumb"
+    },
+    "language": {
+      "es": "Idioma",
+      "en": "Language"
+    },
+    "bookVisit": {
+      "es": "Agendar una visita",
+      "en": "Book a visit"
+    },
+    "learnMore": {
+      "es": "Conocer más",
+      "en": "Learn more"
+    },
+    "seeAll": {
+      "es": "Ver todo",
+      "en": "See all"
+    },
+    "all": {
+      "es": "Todas",
+      "en": "All"
+    },
+    "included": {
+      "es": "Incluido",
+      "en": "Included"
+    },
+    "additional": {
+      "es": "Adicional",
+      "en": "Additional"
+    },
+    "example": {
+      "es": "Ejemplo ilustrativo",
+      "en": "Illustrative example"
+    },
+    "enlarge": {
+      "es": "Ampliar",
+      "en": "Enlarge"
+    },
+    "playVideo": {
+      "es": "Reproducir video",
+      "en": "Play video"
+    },
+    "close": {
+      "es": "Cerrar",
+      "en": "Close"
+    },
+    "previous": {
+      "es": "Anterior",
+      "en": "Previous"
+    },
+    "next": {
+      "es": "Siguiente",
+      "en": "Next"
+    },
+    "filterBy": {
+      "es": "Filtrar por categoría",
+      "en": "Filter by category"
+    },
+    "imageViewer": {
+      "es": "Visor de imágenes",
+      "en": "Image viewer"
+    },
+    "prevTestimonial": {
+      "es": "Testimonio anterior",
+      "en": "Previous testimonial"
+    },
+    "nextTestimonial": {
+      "es": "Testimonio siguiente",
+      "en": "Next testimonial"
+    },
+    "goToTestimonial": {
+      "es": "Ir al testimonio",
+      "en": "Go to testimonial"
+    },
+    "whatsappLabel": {
+      "es": "Escríbenos por WhatsApp",
+      "en": "Message us on WhatsApp"
+    },
+    "chatOpen": {
+      "es": "Abrir chat de atención",
+      "en": "Open support chat"
+    },
+    "chatClose": {
+      "es": "Cerrar chat",
+      "en": "Close chat"
+    },
+    "chatSubtitle": {
+      "es": "Chat de atención · demostración",
+      "en": "Support chat · demo"
+    },
+    "chatPlaceholder": {
+      "es": "Escribe tu mensaje…",
+      "en": "Type your message…"
+    },
+    "chatSend": {
+      "es": "Enviar mensaje",
+      "en": "Send message"
+    },
+    "chatSuggested": {
+      "es": "Preguntas sugeridas",
+      "en": "Suggested questions"
+    },
+    "tourDrag": {
+      "es": "Arrastra para mirar alrededor",
+      "en": "Drag to look around"
+    },
+    "tourLeft": {
+      "es": "Girar a la izquierda",
+      "en": "Turn left"
+    },
+    "tourRight": {
+      "es": "Girar a la derecha",
+      "en": "Turn right"
+    },
+    "tourAuto": {
+      "es": "Girar automáticamente",
+      "en": "Auto-rotate"
+    },
+    "tourStage": {
+      "es": "Vista panorámica. Usa las flechas izquierda y derecha para girar.",
+      "en": "Panoramic view. Use the left and right arrow keys to turn."
+    },
+    "tourSpaces": {
+      "es": "Espacios",
+      "en": "Spaces"
+    },
+    "contactInfo": {
+      "es": "Información de contacto",
+      "en": "Contact information"
+    },
+    "address": {
+      "es": "Dirección",
+      "en": "Address"
+    },
+    "phones": {
+      "es": "Teléfonos",
+      "en": "Phone numbers"
+    },
+    "email": {
+      "es": "Correo",
+      "en": "Email"
+    },
+    "hours": {
+      "es": "Horarios",
+      "en": "Opening hours"
+    },
+    "openMap": {
+      "es": "Ver en el mapa",
+      "en": "View on map"
+    },
+    "followUs": {
+      "es": "Síguenos",
+      "en": "Follow us"
+    },
+    "navigation": {
+      "es": "Navegación",
+      "en": "Navigation"
+    },
+    "rights": {
+      "es": "Todos los derechos reservados.",
+      "en": "All rights reserved."
+    },
+    "notFoundTitle": {
+      "es": "No encontramos esta página",
+      "en": "We couldn’t find this page"
+    },
+    "notFoundText": {
+      "es": "Es posible que la dirección haya cambiado. Vuelve al inicio para seguir navegando.",
+      "en": "The address may have changed. Go back to the home page to keep browsing."
+    },
+    "noTestimonials": {
+      "es": "Pronto compartiremos las experiencias de nuestras familias.",
+      "en": "We will share our families’ experiences soon."
+    },
+    "faqMore": {
+      "es": "¿No encontraste tu respuesta?",
+      "en": "Didn’t find your answer?"
+    },
+    "contactUs": {
+      "es": "Contáctanos",
+      "en": "Contact us"
+    },
+    "formTitle": {
+      "es": "Solicita tu visita",
+      "en": "Request your visit"
+    },
+    "fName": {
+      "es": "Nombre completo",
+      "en": "Full name"
+    },
+    "fPhone": {
+      "es": "Número de teléfono",
+      "en": "Phone number"
+    },
+    "fEmail": {
+      "es": "Correo electrónico",
+      "en": "Email address"
+    },
+    "fService": {
+      "es": "Servicio de interés",
+      "en": "Service of interest"
+    },
+    "fServicePick": {
+      "es": "Selecciona un servicio",
+      "en": "Select a service"
+    },
+    "fServiceOther": {
+      "es": "Otro / Quiero más información",
+      "en": "Other / I would like more information"
+    },
+    "fDate": {
+      "es": "Fecha preferida",
+      "en": "Preferred date"
+    },
+    "fTime": {
+      "es": "Horario preferido",
+      "en": "Preferred time"
+    },
+    "fTimePick": {
+      "es": "Selecciona un horario",
+      "en": "Select a time"
+    },
+    "fMessage": {
+      "es": "Mensaje adicional",
+      "en": "Additional message"
+    },
+    "optional": {
+      "es": "opcional",
+      "en": "optional"
+    },
+    "fSubmit": {
+      "es": "Solicitar visita",
+      "en": "Request visit"
+    },
+    "fSending": {
+      "es": "Enviando…",
+      "en": "Sending…"
+    },
+    "fNote": {
+      "es": "Tu solicitud llegará a nuestro equipo por correo. La visita queda sujeta a verificación de disponibilidad.",
+      "en": "Your request will reach our team by email. Visits are subject to availability."
+    },
+    "fNoteWhatsapp": {
+      "es": "Al enviar se abrirá WhatsApp con tu solicitud lista para enviar. Te contactaremos para confirmar la disponibilidad.",
+      "en": "When you submit, WhatsApp will open with your request ready to send. We will contact you to confirm availability."
+    },
+    "fHoneypot": {
+      "es": "No llenar este campo",
+      "en": "Leave this field empty"
+    },
+    "eName": {
+      "es": "Ingresa tu nombre completo.",
+      "en": "Please enter your full name."
+    },
+    "ePhone": {
+      "es": "Ingresa un número de teléfono válido.",
+      "en": "Please enter a valid phone number."
+    },
+    "eEmail": {
+      "es": "Ingresa un correo electrónico válido.",
+      "en": "Please enter a valid email address."
+    },
+    "eService": {
+      "es": "Selecciona un servicio.",
+      "en": "Please select a service."
+    },
+    "eDate": {
+      "es": "Selecciona una fecha.",
+      "en": "Please select a date."
+    },
+    "eDatePast": {
+      "es": "La fecha no puede ser anterior a hoy.",
+      "en": "The date cannot be in the past."
+    },
+    "eTime": {
+      "es": "Selecciona un horario.",
+      "en": "Please select a time."
+    },
+    "eConsent": {
+      "es": "Debes aceptar la política de tratamiento de datos.",
+      "en": "You must accept the personal data policy."
+    },
+    "eSend": {
+      "es": "No se pudo enviar la solicitud. Inténtalo nuevamente o escríbenos por WhatsApp.",
+      "en": "We couldn’t send your request. Please try again or message us on WhatsApp."
+    },
+    "okWhatsapp": {
+      "es": "¡Listo! Abrimos WhatsApp con tu solicitud. Envía el mensaje y nuestro equipo te contactará para confirmar la disponibilidad.",
+      "en": "Done! We opened WhatsApp with your request. Send the message and our team will contact you to confirm availability."
+    },
+    "waGreeting": {
+      "es": "Hola, quiero solicitar una visita a Seniors.",
+      "en": "Hello, I would like to request a visit to Seniors."
+    },
+    "chatHello": {
+      "es": "¡Hola! ¿En qué podemos ayudarte? Puedes elegir una de las preguntas sugeridas.",
+      "en": "Hi! How can we help you? You can choose one of the suggested questions."
+    },
+    "chatThanks": {
+      "es": "¡Con gusto! Estamos para acompañarte.",
+      "en": "You’re welcome! We’re here for you."
+    },
+    "chatBook": {
+      "es": "Puedes solicitar una visita en el formulario de agendamiento. Nuestro equipo verificará la disponibilidad y te contactará para confirmarla.",
+      "en": "You can request a visit using the booking form. Our team will check availability and contact you to confirm."
+    },
+    "chatBookLink": {
+      "es": "Ir al formulario",
+      "en": "Go to the form"
+    },
+    "chatFallback": {
+      "es": "Gracias por tu mensaje. Este chat es una demostración y aún no responde preguntas abiertas.",
+      "en": "Thanks for your message. This chat is a demo and can’t answer open questions yet."
+    },
+    "chatOr": {
+      "es": "Si prefieres, escríbenos por WhatsApp o llámanos al",
+      "en": "If you prefer, message us on WhatsApp or call us at"
+    },
+    "readMore": {
+      "es": "Leer más",
+      "en": "Read more"
+    },
+    "backToWellness": {
+      "es": "Volver a Bienestar",
+      "en": "Back to Wellness"
+    },
+    "minRead": {
+      "es": "min de lectura",
+      "en": "min read"
+    },
+    "moreArticles": {
+      "es": "Más publicaciones",
+      "en": "More posts"
+    },
+    "by": {
+      "es": "Por",
+      "en": "By"
+    },
+    "featured": {
+      "es": "Destacado",
+      "en": "Featured"
+    },
+    "noPosts": {
+      "es": "Pronto compartiremos historias y artículos.",
+      "en": "We will share stories and articles soon."
+    },
+    "eNotConfigured": {
+      "es": "El envío por correo aún no está habilitado. Mientras tanto, puedes enviarnos tu solicitud por WhatsApp.",
+      "en": "Email submission is not enabled yet. In the meantime, you can send us your request on WhatsApp."
+    },
+    "sendWhatsapp": {
+      "es": "Enviar por WhatsApp",
+      "en": "Send on WhatsApp"
+    },
+    "pConcept": {
+      "es": "Concepto de pago",
+      "en": "Payment concept"
+    },
+    "pConceptPick": {
+      "es": "Selecciona un concepto",
+      "en": "Select a concept"
+    },
+    "pAmount": {
+      "es": "Valor a pagar",
+      "en": "Amount to pay"
+    },
+    "pName": {
+      "es": "Nombre del responsable",
+      "en": "Name of the person responsible"
+    },
+    "pEmail": {
+      "es": "Correo electrónico",
+      "en": "Email address"
+    },
+    "pMethod": {
+      "es": "Método de pago",
+      "en": "Payment method"
+    },
+    "pSubmit": {
+      "es": "Continuar al pago",
+      "en": "Continue to payment"
+    },
+    "pSummary": {
+      "es": "Resumen del pago",
+      "en": "Payment summary"
+    },
+    "pEdit": {
+      "es": "Modificar datos",
+      "en": "Edit details"
+    },
+    "pSecure": {
+      "es": "Pagos procesados de forma segura por Wompi",
+      "en": "Payments securely processed by Wompi"
+    },
+    "ePConcept": {
+      "es": "Selecciona el concepto de pago.",
+      "en": "Please select the payment concept."
+    },
+    "ePAmount": {
+      "es": "Ingresa un valor válido",
+      "en": "Please enter a valid amount"
+    },
+    "ePMethod": {
+      "es": "Selecciona un método de pago.",
+      "en": "Please select a payment method."
+    },
+    "pOtherConcept": {
+      "es": "Escribe el concepto del pago",
+      "en": "Describe the payment concept"
+    },
+    "pOtherConceptHint": {
+      "es": "Ej.: reserva de cupo, celebración de cumpleaños",
+      "en": "E.g. place reservation, birthday celebration"
+    },
+    "ePOtherConcept": {
+      "es": "Escribe el concepto por el cual vas a pagar.",
+      "en": "Please describe what you are paying for."
+    },
+    "pNotes": {
+      "es": "Otros detalles",
+      "en": "Other details"
+    },
+    "pNotesHint": {
+      "es": "Ej.: nombre del residente, mes que se paga, número de factura u otra información útil",
+      "en": "E.g. resident’s name, month being paid, invoice number or other useful information"
+    }
+  }
+}

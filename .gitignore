@@ -1,7 +1,8 @@
 node_modules/
+dist/
+.cache/
 data/
 uploads/
 .env
 .claude/
 *.log
-api/_server.js

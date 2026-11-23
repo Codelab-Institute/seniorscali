@@ -1,0 +1,67 @@
+# Construye y revisa el sitio en cada pull request y en cada cambio de la rama main.
+# Si el repositorio tiene GitHub Pages activado (Source: GitHub Actions), además lo publica.
+# En repositorios que publican en otro servicio (por ejemplo Vercel) solo actúa como revisión.
+name: Construir y publicar
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      pages: ${{ steps.pages.outcome == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Falla sin detener el flujo si el repositorio no tiene GitHub Pages activado
+      - id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+
+      # BASE_PATH = subcarpeta del sitio en Pages (p. ej. /seniors-2.0); SITE_URL = dominio de Pages
+      - name: Construir el sitio
+        run: npm run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+
+      - name: Revisar enlaces y metadatos
+        run: npm run check
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - if: steps.pages.outcome == 'success' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.pages == 'true' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

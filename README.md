@@ -103,9 +103,10 @@ El formulario pide concepto de pago, detalle (opcional), valor en COP, nombre de
 
 ## Publicación
 
-El sitio se publica solo en **GitHub Pages** cada vez que hay un cambio en la rama `main` (con `git push`). El flujo `.github/workflows/deploy.yml` construye el sitio, lo revisa con `npm run check` y lo publica. Si la revisión encuentra un error, no publica.
+El flujo `.github/workflows/deploy.yml` construye el sitio y lo revisa con `npm run check` en cada pull request y en cada cambio de la rama `main`.
 
-Requisito: en *Settings → Pages* del repositorio, **Source** debe ser **GitHub Actions**.
+- **GitHub Pages:** si en *Settings → Pages* del repositorio **Source** es **GitHub Actions**, el mismo flujo publica el sitio después de cada cambio en `main`. Si la revisión encuentra un error, no publica.
+- **Vercel:** `vercel.json` ya está configurado (`npm run build`, carpeta `dist`, caché y cabeceras de seguridad). Basta con conectar el repositorio en Vercel.
 
 Otros hostings: `npm run build` y sube `dist/`. En una subcarpeta construye con `BASE_PATH=/carpeta npm run build`. Con dominio propio, ajusta `siteUrl` en `src/content/settings.json`. El archivo `_headers` configura la caché en Netlify y Cloudflare Pages.
 
